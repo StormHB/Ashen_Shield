@@ -1,0 +1,73 @@
+package ashen.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class MainMenuPanel extends JPanel {
+
+    private MainFrame mainFrame;
+
+    public MainMenuPanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        layoutComponents();
+    }
+
+    private void layoutComponents() {
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+        JLabel topTitle = new JLabel("Ashen Shield", JLabel.CENTER);
+        topTitle.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        topTitle.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.BLACK));
+        add(topTitle, BorderLayout.NORTH);
+
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+
+        JLabel title = new JLabel("ASHEN SHIELD", JLabel.CENTER);
+        title.setFont(new Font("SansSerif", Font.BOLD, 36));
+
+        JLabel subtitle = new JLabel("Character Creation & Turn-Based Fantasy Combat", JLabel.CENTER);
+        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 20));
+
+        JButton newCharacterButton = createMenuButton("New Character");
+        JButton loadCharacterButton = createMenuButton("Load Character");
+        JButton exitButton = createMenuButton("Exit");
+
+        newCharacterButton.addActionListener(e -> mainFrame.showCharacterCreation());
+        exitButton.addActionListener(e -> System.exit(0));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        gbc.insets = new Insets(0, 0, 10, 0);
+        gbc.gridy = 0;
+        centerPanel.add(title, gbc);
+
+        gbc.insets = new Insets(0, 0, 100, 0);
+        gbc.gridy = 1;
+        centerPanel.add(subtitle, gbc);
+
+        gbc.insets = new Insets(10, 0, 15, 0);
+        gbc.gridy = 2;
+        centerPanel.add(newCharacterButton, gbc);
+
+        gbc.gridy = 3;
+        centerPanel.add(loadCharacterButton, gbc);
+
+        gbc.gridy = 4;
+        centerPanel.add(exitButton, gbc);
+
+        add(centerPanel, BorderLayout.CENTER);
+    }
+
+    private JButton createMenuButton(String text) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(new Dimension(280, 55));
+        button.setFont(new Font("SansSerif", Font.BOLD, 20));
+        button.setFocusPainted(false);
+        button.setBackground(Color.WHITE);
+        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        return button;
+    }
+}
