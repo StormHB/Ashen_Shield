@@ -20,21 +20,21 @@ public class CharacterCreationPanel extends JPanel {
     private int constitution = 10;
     private int intelligence = 10;
     private int wisdom = 10;
-    private int charisma = 10;
+    private int luck = 10;
 
     private JLabel strengthValueLabel;
     private JLabel dexterityValueLabel;
     private JLabel constitutionValueLabel;
     private JLabel intelligenceValueLabel;
     private JLabel wisdomValueLabel;
-    private JLabel charismaValueLabel;
+    private JLabel luckValueLabel;
 
     private JLabel strengthModifierLabel;
     private JLabel dexterityModifierLabel;
     private JLabel constitutionModifierLabel;
     private JLabel intelligenceModifierLabel;
     private JLabel wisdomModifierLabel;
-    private JLabel charismaModifierLabel;
+    private JLabel luckModifierLabel;
 
     public CharacterCreationPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -128,14 +128,14 @@ public class CharacterCreationPanel extends JPanel {
         constitutionValueLabel = new JLabel(String.valueOf(constitution));
         intelligenceValueLabel = new JLabel(String.valueOf(intelligence));
         wisdomValueLabel = new JLabel(String.valueOf(wisdom));
-        charismaValueLabel = new JLabel(String.valueOf(charisma));
+        luckValueLabel = new JLabel(String.valueOf(luck));
 
         strengthModifierLabel = new JLabel(formatModifier(calculateModifier(strength)));
         dexterityModifierLabel = new JLabel(formatModifier(calculateModifier(dexterity)));
         constitutionModifierLabel = new JLabel(formatModifier(calculateModifier(constitution)));
         intelligenceModifierLabel = new JLabel(formatModifier(calculateModifier(intelligence)));
         wisdomModifierLabel = new JLabel(formatModifier(calculateModifier(wisdom)));
-        charismaModifierLabel = new JLabel(formatModifier(calculateModifier(charisma)));
+        luckModifierLabel = new JLabel(formatModifier(calculateModifier(luck)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -153,7 +153,7 @@ public class CharacterCreationPanel extends JPanel {
         addStatRow(statsPanel, gbc, 3, "CON", constitutionValueLabel, constitutionModifierLabel);
         addStatRow(statsPanel, gbc, 4, "INT", intelligenceValueLabel, intelligenceModifierLabel);
         addStatRow(statsPanel, gbc, 5, "WIS", wisdomValueLabel, wisdomModifierLabel);
-        addStatRow(statsPanel, gbc, 6, "CHA", charismaValueLabel, charismaModifierLabel);
+        addStatRow(statsPanel, gbc, 6, "LCK", luckValueLabel, luckModifierLabel);
 
         panel.add(statsPanel, BorderLayout.NORTH);
 
@@ -241,7 +241,7 @@ public class CharacterCreationPanel extends JPanel {
         constitutionModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(constitutionValueLabel.getText()))));
         intelligenceModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(intelligenceValueLabel.getText()))));
         wisdomModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(wisdomValueLabel.getText()))));
-        charismaModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(charismaValueLabel.getText()))));
+        luckModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(luckValueLabel.getText()))));
     }
 
     private void randomizeStats() {
@@ -256,7 +256,7 @@ public class CharacterCreationPanel extends JPanel {
                 case 2 -> increaseStat(constitutionValueLabel);
                 case 3 -> increaseStat(intelligenceValueLabel);
                 case 4 -> increaseStat(wisdomValueLabel);
-                case 5 -> increaseStat(charismaValueLabel);
+                case 5 -> increaseStat(luckValueLabel);
             }
         }
     }
@@ -269,7 +269,7 @@ public class CharacterCreationPanel extends JPanel {
         constitutionValueLabel.setText("10");
         intelligenceValueLabel.setText("10");
         wisdomValueLabel.setText("10");
-        charismaValueLabel.setText("10");
+        luckValueLabel.setText("10");
 
         updatePointsRemainingLabel();
         updateModifierLabels();
