@@ -15,12 +15,12 @@ public class CharacterCreationPanel extends JPanel {
     private JLabel pointsRemainingLabel;
     private int pointsRemaining = 12;
 
-    private int strength = 10;
-    private int dexterity = 10;
-    private int constitution = 10;
-    private int intelligence = 10;
-    private int wisdom = 10;
-    private int luck = 10;
+    private int strengthBase = 10;
+    private int dexterityBase = 10;
+    private int constitutionBase = 10;
+    private int intelligenceBase = 10;
+    private int wisdomBase = 10;
+    private int luckBase = 10;
 
     private JLabel strengthValueLabel;
     private JLabel dexterityValueLabel;
@@ -35,6 +35,19 @@ public class CharacterCreationPanel extends JPanel {
     private JLabel intelligenceModifierLabel;
     private JLabel wisdomModifierLabel;
     private JLabel luckModifierLabel;
+
+    private int strengthRaceBonus;
+    private int dexterityRaceBonus;
+    private int constitutionRaceBonus;
+    private int intelligenceRaceBonus;
+    private int wisdomRaceBonus;
+    private int luckRaceBonus;
+
+    private JLabel raceBonusLabel;
+
+    private final Color defaultStatColor = Color.BLACK;
+    private final Color lightBonusColor = new Color(180, 140, 0);
+    private final Color strongBonusColor = new Color(0, 180, 0);
 
     public CharacterCreationPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -57,6 +70,7 @@ public class CharacterCreationPanel extends JPanel {
         addStatsPanel(leftPanel);
         JPanel rightPanel = createSectionPanel("Character Options");
         addCharacterOptions(rightPanel);
+        applyRaceBonuses();
 
         mainPanel.add(leftPanel);
         mainPanel.add(rightPanel);
@@ -88,9 +102,13 @@ public class CharacterCreationPanel extends JPanel {
 
         nameField = new JTextField(15);
         raceBox = new JComboBox<>(new String[]{"Human", "Elf", "Dwarf", "Half-Orc", "Dragonborn"});
+        raceBonusLabel = new JLabel();
+        raceBonusLabel.setFont(new Font("SansSerif", Font.ITALIC, 12));
         classBox = new JComboBox<>(new String[]{"Fighter", "Rogue", "Wizard", "Druid", "Ranger"});
         weaponBox = new JComboBox<>(new String[] {"Longsword", "Dagger", "Quarterstaff", "Scimitar", "Longbow", "Shortbow"});
         armorBox = new JComboBox<>(new String[] {"Cloth Robe", "Leather Armor", "Hide Armor", "Chain Mail", "Plate Armor"});
+
+        raceBox.addActionListener(e -> applyRaceBonuses());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -99,9 +117,15 @@ public class CharacterCreationPanel extends JPanel {
 
         addFormRow(formPanel, gbc, 0, "Name:", nameField);
         addFormRow(formPanel, gbc, 1, "Race:", raceBox);
-        addFormRow(formPanel, gbc, 2, "Class:", classBox);
-        addFormRow(formPanel, gbc, 3, "Weapon", weaponBox);
-        addFormRow(formPanel, gbc, 4, "Armor", armorBox);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.weightx = 1;
+        formPanel.add(raceBonusLabel, gbc);
+
+        addFormRow(formPanel, gbc, 3, "Class:", classBox);
+        addFormRow(formPanel, gbc, 4, "Weapon", weaponBox);
+        addFormRow(formPanel, gbc, 5, "Armor", armorBox);
 
         panel.add(formPanel, BorderLayout.NORTH);
     }
@@ -123,19 +147,19 @@ public class CharacterCreationPanel extends JPanel {
         pointsRemainingLabel = new JLabel("Points Remaining: " + pointsRemaining);
         pointsRemainingLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        strengthValueLabel = new JLabel(String.valueOf(strength));
-        dexterityValueLabel = new JLabel(String.valueOf(dexterity));
-        constitutionValueLabel = new JLabel(String.valueOf(constitution));
-        intelligenceValueLabel = new JLabel(String.valueOf(intelligence));
-        wisdomValueLabel = new JLabel(String.valueOf(wisdom));
-        luckValueLabel = new JLabel(String.valueOf(luck));
+        strengthValueLabel = new JLabel(String.valueOf(strengthBase));
+        dexterityValueLabel = new JLabel(String.valueOf(dexterityBase));
+        constitutionValueLabel = new JLabel(String.valueOf(constitutionBase));
+        intelligenceValueLabel = new JLabel(String.valueOf(intelligenceBase));
+        wisdomValueLabel = new JLabel(String.valueOf(wisdomBase));
+        luckValueLabel = new JLabel(String.valueOf(luckBase));
 
-        strengthModifierLabel = new JLabel(formatModifier(calculateModifier(strength)));
-        dexterityModifierLabel = new JLabel(formatModifier(calculateModifier(dexterity)));
-        constitutionModifierLabel = new JLabel(formatModifier(calculateModifier(constitution)));
-        intelligenceModifierLabel = new JLabel(formatModifier(calculateModifier(intelligence)));
-        wisdomModifierLabel = new JLabel(formatModifier(calculateModifier(wisdom)));
-        luckModifierLabel = new JLabel(formatModifier(calculateModifier(luck)));
+        strengthModifierLabel = new JLabel(formatModifier(calculateModifier(strengthBase)));
+        dexterityModifierLabel = new JLabel(formatModifier(calculateModifier(dexterityBase)));
+        constitutionModifierLabel = new JLabel(formatModifier(calculateModifier(constitutionBase)));
+        intelligenceModifierLabel = new JLabel(formatModifier(calculateModifier(intelligenceBase)));
+        wisdomModifierLabel = new JLabel(formatModifier(calculateModifier(wisdomBase)));
+        luckModifierLabel = new JLabel(formatModifier(calculateModifier(luckBase)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -197,27 +221,59 @@ public class CharacterCreationPanel extends JPanel {
     }
 
     private void increaseStat(JLabel valueLabel) {
-        int currentValue = Integer.parseInt(valueLabel.getText());
-
-        if (pointsRemaining > 0 && currentValue < 18) {
-            currentValue++;
-            pointsRemaining--;
-            valueLabel.setText(String.valueOf(currentValue));
-            updatePointsRemainingLabel();
-            updateModifierLabels();
+        if (pointsRemaining <= 0) {
+            return;
         }
+
+        if (valueLabel == strengthValueLabel && strengthBase < 18) {
+            strengthBase++;
+            pointsRemaining--;
+        } else if (valueLabel == dexterityValueLabel && dexterityBase < 18) {
+            dexterityBase++;
+            pointsRemaining--;
+        } else if (valueLabel == constitutionValueLabel && constitutionBase < 18) {
+            constitutionBase++;
+            pointsRemaining--;
+        } else if (valueLabel == intelligenceValueLabel && intelligenceBase < 18) {
+            intelligenceBase++;
+            pointsRemaining--;
+        } else if (valueLabel == wisdomValueLabel && wisdomBase < 18) {
+            wisdomBase++;
+            pointsRemaining--;
+        } else if (valueLabel == luckValueLabel && luckBase < 18) {
+            luckBase++;
+            pointsRemaining--;
+        }
+
+        updateStatLabels();
+        updatePointsRemainingLabel();
+        updateModifierLabels();
     }
 
     private void decreaseStat(JLabel valueLabel) {
-        int currentValue = Integer.parseInt(valueLabel.getText());
-
-        if (currentValue > 8) {
-            currentValue--;
+        if (valueLabel == strengthValueLabel && strengthBase > 8) {
+            strengthBase--;
             pointsRemaining++;
-            valueLabel.setText(String.valueOf(currentValue));
-            updatePointsRemainingLabel();
-            updateModifierLabels();
+        } else if (valueLabel == dexterityValueLabel && dexterityBase > 8) {
+            dexterityBase--;
+            pointsRemaining++;
+        } else if (valueLabel == constitutionValueLabel && constitutionBase > 8) {
+            constitutionBase--;
+            pointsRemaining++;
+        } else if (valueLabel == intelligenceValueLabel && intelligenceBase > 8) {
+            intelligenceBase--;
+            pointsRemaining++;
+        } else if (valueLabel == wisdomValueLabel && wisdomBase > 8) {
+            wisdomBase--;
+            pointsRemaining++;
+        } else if (valueLabel == luckValueLabel && luckBase > 8) {
+            luckBase--;
+            pointsRemaining++;
         }
+
+        updateStatLabels();
+        updatePointsRemainingLabel();
+        updateModifierLabels();
     }
 
     private void updatePointsRemainingLabel() {
@@ -264,14 +320,86 @@ public class CharacterCreationPanel extends JPanel {
     private void resetStats() {
         pointsRemaining = 12;
 
-        strengthValueLabel.setText("10");
-        dexterityValueLabel.setText("10");
-        constitutionValueLabel.setText("10");
-        intelligenceValueLabel.setText("10");
-        wisdomValueLabel.setText("10");
-        luckValueLabel.setText("10");
+        strengthBase = 10;
+        dexterityBase = 10;
+        constitutionBase = 10;
+        intelligenceBase = 10;
+        wisdomBase = 10;
+        luckBase = 10;
 
+        updateStatLabels();
         updatePointsRemainingLabel();
         updateModifierLabels();
+    }
+
+    private void updateStatLabels() {
+        strengthValueLabel.setText(String.valueOf(Math.min(20, strengthBase + strengthRaceBonus)));
+        dexterityValueLabel.setText(String.valueOf(Math.min(20, dexterityBase + dexterityRaceBonus)));
+        constitutionValueLabel.setText(String.valueOf(Math.min(20, constitutionBase + constitutionRaceBonus)));
+        intelligenceValueLabel.setText(String.valueOf(Math.min(20, intelligenceBase + intelligenceRaceBonus)));
+        wisdomValueLabel.setText(String.valueOf(Math.min(20, wisdomBase + wisdomRaceBonus)));
+        luckValueLabel.setText(String.valueOf(Math.min(20, luckBase + luckRaceBonus)));
+
+        updateStatColors();
+    }
+
+    private void applyRaceBonuses() {
+        resetRaceBonuses();
+
+        String selectedRace = (String) raceBox.getSelectedItem();
+
+        if ("Human".equals(selectedRace)) {
+            strengthRaceBonus = 1;
+            constitutionRaceBonus = 1;
+            luckRaceBonus = 1;
+            raceBonusLabel.setText("Race Bonus: +1 STR, +1 CON, +1 LCK");
+        } else if ("Elf".equals(selectedRace)) {
+            dexterityRaceBonus = 2;
+            intelligenceRaceBonus = 1;
+            raceBonusLabel.setText("Race Bonus: +2 DEX, +1 INT");
+        } else if ("Dwarf".equals(selectedRace)) {
+            constitutionRaceBonus = 2;
+            wisdomRaceBonus = 1;
+            raceBonusLabel.setText("Race Bonus: +2 CON, +1 WIS");
+        } else if ("Half-Orc".equals(selectedRace)) {
+            strengthRaceBonus = 2;
+            constitutionRaceBonus = 1;
+            raceBonusLabel.setText("Race Bonus: +2 STR, +1 CON");
+        } else if ("Dragonborn".equals(selectedRace)) {
+            strengthRaceBonus = 2;
+            luckRaceBonus = 1;
+            raceBonusLabel.setText("Race Bonus: +2 STR, +1 LCK");
+        }
+
+        updateStatLabels();
+        updateModifierLabels();
+    }
+
+    private void resetRaceBonuses() {
+        strengthRaceBonus = 0;
+        dexterityRaceBonus = 0;
+        constitutionRaceBonus = 0;
+        intelligenceRaceBonus = 0;
+        wisdomRaceBonus = 0;
+        luckRaceBonus = 0;
+    }
+
+    private void updateStatColors() {
+        setStatColor(strengthValueLabel, strengthRaceBonus);
+        setStatColor(dexterityValueLabel, dexterityRaceBonus);
+        setStatColor(constitutionValueLabel, constitutionRaceBonus);
+        setStatColor(intelligenceValueLabel, intelligenceRaceBonus);
+        setStatColor(wisdomValueLabel, wisdomRaceBonus);
+        setStatColor(luckValueLabel, luckRaceBonus);
+    }
+
+    private void setStatColor(JLabel label, int bonus) {
+        if (bonus >= 2) {
+            label.setForeground(strongBonusColor);
+        } else if (bonus == 1) {
+            label.setForeground(lightBonusColor);
+        } else {
+            label.setForeground(defaultStatColor);
+        }
     }
 }
