@@ -506,11 +506,6 @@ public class CharacterCreationPanel extends JPanel {
                 shieldCheckBox.isSelected()
         );
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Character created:\n" + character.getName(),
-                "Character Created",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        mainFrame.showBattle(character);
     }
 }

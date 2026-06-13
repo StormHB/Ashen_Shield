@@ -1,5 +1,7 @@
 package ashen.gui;
 
+import ashen.model.GameCharacter;
+
 import javax.smartcardio.Card;
 import javax.swing.*;
 import java.awt.*;
@@ -38,5 +40,13 @@ public class MainFrame extends JFrame {
 
     public void showCharacterCreation() {
         cardLayout.show(contentPane, "characterCreation");
+    }
+
+    public void showBattle(GameCharacter character) {
+
+        setContentPane(new BattlePanel(character));
+
+        revalidate();
+        repaint();
     }
 }
