@@ -2,6 +2,8 @@ package ashen.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import ashen.model.GameCharacter;
+import ashen.model.Stats;
 
 public class CharacterCreationPanel extends JPanel {
 
@@ -83,9 +85,9 @@ public class CharacterCreationPanel extends JPanel {
         bottomPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
 
         JButton backButton = new JButton("Back");
-        JButton createButton = new JButton("Create Character");
-
         backButton.addActionListener(e -> mainFrame.showMainMenu());
+        JButton createButton = new JButton("Create Character");
+        createButton.addActionListener(e -> createCharacter());
 
         bottomPanel.add(backButton);
         bottomPanel.add(createButton);
@@ -460,5 +462,55 @@ public class CharacterCreationPanel extends JPanel {
         if (!shieldCheckBox.isEnabled()) {
             shieldCheckBox.setSelected(false);
         }
+    }
+
+    private void createCharacter() {
+        String name = nameField.getText().trim();
+
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Character name cannot be empty.",
+                    "Invalid Character",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        if (pointsRemaining > 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "You must spend all stat points before creating a character.",
+                    "Invalid Character",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        Stats stats = new Stats(
+                Integer.parseInt(strengthValueLabel.getText()),
+                Integer.parseInt(dexterityValueLabel.getText()),
+                Integer.parseInt(constitutionValueLabel.getText()),
+                Integer.parseInt(intelligenceValueLabel.getText()),
+                Integer.parseInt(wisdomValueLabel.getText()),
+                Integer.parseInt(luckValueLabel.getText())
+        );
+
+        GameCharacter character = new GameCharacter(
+                name,
+                (String) raceBox.getSelectedItem(),
+                (String) classBox.getSelectedItem(),
+                stats,
+                (String) weaponBox.getSelectedItem(),
+                (String) armorBox.getSelectedItem(),
+                shieldCheckBox.isSelected()
+        );
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Character created:\n" + character.getName(),
+                "Character Created",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }
