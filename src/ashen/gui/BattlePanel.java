@@ -13,8 +13,9 @@ public class BattlePanel extends JPanel {
 
     private GameCharacter character;
     private Enemy enemy;
-    private int playerMaxHp;
-    private int playerCurrentHp;
+
+    private int currentBattleIndex = 0;
+    private Enemy[] enemies;
 
     private JLabel playerHpLabel;
     private JLabel playerAcLabel;
@@ -29,9 +30,6 @@ public class BattlePanel extends JPanel {
     public BattlePanel(GameCharacter character) {
         this.character = character;
         this.enemy = new Enemy("Goblin", 10, 12, 2);
-
-        this.playerMaxHp = calculateHP();
-        this.playerCurrentHp = playerMaxHp;
 
         layoutComponents();
         saveLoadService = new SaveLoadService();
@@ -105,7 +103,7 @@ public class BattlePanel extends JPanel {
                 "Player"
         ));
 
-        playerHpLabel = new JLabel("HP: " + playerCurrentHp + "/" + playerMaxHp);
+        playerHpLabel = new JLabel("HP: " + character.getCurrentHp() + "/" + character.getMaxHp());
         playerAcLabel = new JLabel("AC: " + calculateAC());
 
         panel.add(new JLabel("Name: " + character.getName()));
@@ -419,7 +417,7 @@ public class BattlePanel extends JPanel {
                             + damage
                             + "\n"
             );
-            battleLogArea.append(character.getName() + " HP: " + playerCurrentHp + "/" + playerMaxHp + "\n");
+            battleLogArea.append(character.getName() + " HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n");
 
             checkPlayerDefeated();
             battleLogArea.append("\n");
@@ -443,7 +441,7 @@ public class BattlePanel extends JPanel {
                             + damage
                             + "\n"
             );
-            battleLogArea.append(character.getName() + " HP: " + playerCurrentHp + "/" + playerMaxHp + "\n");
+            battleLogArea.append(character.getName() + " HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n");
 
             checkPlayerDefeated();
             battleLogArea.append("\n");
@@ -453,17 +451,16 @@ public class BattlePanel extends JPanel {
     }
 
     private void damagePlayer(int damage) {
-        playerCurrentHp -= damage;
+        character.takeDamage(damage);
+        updatePlayerHpLabel();
+    }
 
-        if (playerCurrentHp < 0) {
-            playerCurrentHp = 0;
-        }
-
-        playerHpLabel.setText("HP: " + playerCurrentHp + "/" + playerMaxHp);
+    private void updatePlayerHpLabel() {
+        playerHpLabel.setText("HP: " + character.getCurrentHp() + "/" + character.getMaxHp());
     }
 
     private void checkPlayerDefeated() {
-        if (playerCurrentHp <= 0) {
+        if (character.isDefeated()) {
             battleLogArea.append(character.getName() + " has been defeated!\n");
             attackButton.setEnabled(false);
         }
@@ -550,7 +547,7 @@ public class BattlePanel extends JPanel {
                         "Race Bonus: " + getRaceBonusDescription() + "\n" +
                         "Class: " + character.getCharacterClass() + "\n\n" +
 
-                        "HP: " + playerCurrentHp + "/" + playerMaxHp + "\n" +
+                        "HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n" +
                         "AC: " + calculateAC() + "\n" +
                         "Attack Bonus: " + formatModifier(calculateAttackBonus()) + "\n\n" +
 
@@ -620,5 +617,15 @@ public class BattlePanel extends JPanel {
             default:
                 return "?";
         }
+    }
+
+    private void createEnemies() {
+        enemies = new Enemy[]{
+                new Enemy("Goblin", 10, 12, 2),
+                new Enemy("Skeleton", 15, 13, 3),
+                new Enemy("Orc", 22, 14, 4),
+                new Enemy("Hobgoblin", 30, 15, 5),
+                new Enemy("Young Dragon", 45, 17, 7)
+        };
     }
 }
