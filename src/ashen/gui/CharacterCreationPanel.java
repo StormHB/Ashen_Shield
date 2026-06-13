@@ -49,6 +49,8 @@ public class CharacterCreationPanel extends JPanel {
     private final Color lightBonusColor = new Color(180, 140, 0);
     private final Color strongBonusColor = new Color(0, 180, 0);
 
+    private JCheckBox shieldCheckBox;
+
     public CharacterCreationPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         layoutComponents();
@@ -105,8 +107,11 @@ public class CharacterCreationPanel extends JPanel {
         raceBonusLabel = new JLabel();
         raceBonusLabel.setFont(new Font("SansSerif", Font.ITALIC, 12));
         classBox = new JComboBox<>(new String[]{"Fighter", "Rogue", "Wizard", "Druid", "Ranger"});
-        weaponBox = new JComboBox<>(new String[] {"Longsword", "Dagger", "Quarterstaff", "Scimitar", "Longbow", "Shortbow"});
-        armorBox = new JComboBox<>(new String[] {"Cloth Robe", "Leather Armor", "Hide Armor", "Chain Mail", "Plate Armor"});
+        classBox.addActionListener(e -> updateClassEquipment());
+        weaponBox = new JComboBox<>();
+        weaponBox.addActionListener(e -> updateShieldAvailability());
+        armorBox = new JComboBox<>();
+        shieldCheckBox = new JCheckBox("Use Shield");
 
         raceBox.addActionListener(e -> applyRaceBonuses());
 
@@ -124,9 +129,11 @@ public class CharacterCreationPanel extends JPanel {
         formPanel.add(raceBonusLabel, gbc);
 
         addFormRow(formPanel, gbc, 3, "Class:", classBox);
-        addFormRow(formPanel, gbc, 4, "Weapon", weaponBox);
-        addFormRow(formPanel, gbc, 5, "Armor", armorBox);
+        addFormRow(formPanel, gbc, 4, "Weapon:", weaponBox);
+        addFormRow(formPanel, gbc, 5, "Armor:", armorBox);
+        addFormRow(formPanel, gbc, 6, "Shield:", shieldCheckBox);
 
+        updateClassEquipment();
         panel.add(formPanel, BorderLayout.NORTH);
     }
 
@@ -400,6 +407,58 @@ public class CharacterCreationPanel extends JPanel {
             label.setForeground(lightBonusColor);
         } else {
             label.setForeground(defaultStatColor);
+        }
+    }
+
+    private void updateClassEquipment() {
+        String selectedClass = (String) classBox.getSelectedItem();
+
+        weaponBox.removeAllItems();
+        armorBox.removeAllItems();
+
+        if ("Fighter".equals(selectedClass)) {
+            addWeapons("Longsword");
+            addArmor("Chain Mail", "Plate Armor");
+        } else if ("Rogue".equals(selectedClass)) {
+            addWeapons("Dagger", "Scimitar", "Shortbow");
+            addArmor("Leather Armor");
+        } else if ("Wizard".equals(selectedClass)) {
+            addWeapons("Quarterstaff");
+            addArmor("Cloth Robe");
+        } else if ("Druid".equals(selectedClass)) {
+            addWeapons("Quarterstaff", "Scimitar");
+            addArmor("Leather Armor", "Hide Armor");
+        } else if ("Ranger".equals(selectedClass)) {
+            addWeapons("Longbow", "Shortbow", "Dagger");
+            addArmor("Leather Armor", "Hide Armor");
+        }
+
+        updateShieldAvailability();
+    }
+
+    private void addWeapons(String... weapons) {
+        for (String weapon : weapons) {
+            weaponBox.addItem(weapon);
+        }
+    }
+
+    private void addArmor(String... armorList) {
+        for (String armor : armorList) {
+            armorBox.addItem(armor);
+        }
+    }
+
+    private void updateShieldAvailability() {
+        String selectedClass = (String) classBox.getSelectedItem();
+        String selectedWeapon = (String) weaponBox.getSelectedItem();
+
+        boolean fighterSelected = "Fighter".equals(selectedClass);
+        boolean oneHandedWeapon = "Longsword".equals(selectedWeapon);
+
+        shieldCheckBox.setEnabled(fighterSelected && oneHandedWeapon);
+
+        if (!shieldCheckBox.isEnabled()) {
+            shieldCheckBox.setSelected(false);
         }
     }
 }
