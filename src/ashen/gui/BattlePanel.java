@@ -4,6 +4,8 @@ import ashen.model.Enemy;
 import ashen.model.GameCharacter;
 import ashen.service.SaveLoadService;
 
+import java.io.File;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -77,8 +79,13 @@ public class BattlePanel extends JPanel {
         saveButton.setPreferredSize(new Dimension(120, 40));
         saveButton.addActionListener(e -> saveCharacter());
 
+        JButton saveAsButton = new JButton("Save As");
+        saveAsButton.setPreferredSize(new Dimension(120, 40));
+        saveAsButton.addActionListener(e -> saveCharacterAs());
+
         actionPanel.add(attackButton);
         actionPanel.add(saveButton);
+        actionPanel.add(saveAsButton);
 
         add(actionPanel, BorderLayout.SOUTH);
 
@@ -480,6 +487,48 @@ public class BattlePanel extends JPanel {
                     this,
                     "Failed to save character."
             );
+        }
+    }
+
+    private void saveCharacterAs() {
+
+        JFileChooser fileChooser = new JFileChooser(new File("DATA"));
+
+        fileChooser.setDialogTitle("Save Character");
+
+        int result = fileChooser.showSaveDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+
+            File selectedFile = fileChooser.getSelectedFile();
+
+            String filePath = selectedFile.getAbsolutePath();
+
+            if (!filePath.endsWith(".ser")) {
+                filePath += ".ser";
+            }
+
+            try {
+
+                saveLoadService.saveCharacter(
+                        character,
+                        filePath
+                );
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Character saved successfully."
+                );
+
+            } catch (Exception e) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Failed to save character.",
+                        "Save Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
     }
 }
