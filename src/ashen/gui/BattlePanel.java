@@ -14,6 +14,10 @@ public class BattlePanel extends JPanel {
     private GameCharacter character;
     private Enemy enemy;
 
+    private boolean wizardPassiveUsed;
+    private boolean rogueSneakAttackUsed;
+    private boolean rangerAmbushUsed;
+
     private int currentEnemyIndex = 0;
     private Enemy[] enemies;
 
@@ -100,6 +104,13 @@ public class BattlePanel extends JPanel {
 
         battleLogArea.append("Battle " + (currentEnemyIndex + 1) + "/" + enemies.length + " started!\n");
         battleLogArea.append(character.getName() + " encounters " + enemy.getName() + ".\n\n");
+
+        if ("Ranger".equals(character.getCharacterClass()) && !rangerAmbushUsed) {
+            rangerAmbushUsed = true;
+            battleLogArea.append(character.getName() + " uses Ambush and attacks from distance!\n");
+
+            SwingUtilities.invokeLater(() -> playerAttack(false));
+        }
     }
 
     private JPanel createPlayerPanel() {
@@ -144,6 +155,87 @@ public class BattlePanel extends JPanel {
     }
 
     private void handleAttack() {
+        playerAttack(true);
+    }
+
+    private void playerAttack(boolean enemyResponds) {
+
+        if ("Rogue".equals(character.getCharacterClass()) && !rogueSneakAttackUsed) {
+            rogueSneakAttackUsed = true;
+
+            int weaponDice = getWeaponDamageDice();
+            int damageRoll = rollDice(weaponDice);
+            int sneakRoll = rollDice(8);
+            int damageModifier = calculateAbilityModifierForAttack();
+
+            int damage = damageRoll + sneakRoll + damageModifier;
+
+            if (damage < 1) {
+                damage = 1;
+            }
+
+            enemy.takeDamage(damage);
+            updateEnemyHpLabel();
+
+            battleLogArea.append(character.getName() + " uses Sneak Attack!\n");
+            battleLogArea.append("Automatic Hit!\n");
+            battleLogArea.append(
+                    "Damage Roll: "
+                            + damageRoll
+                            + " + Sneak Attack "
+                            + sneakRoll
+                            + " + "
+                            + damageModifier
+                            + " = "
+                            + damage
+                            + "\n"
+            );
+            battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
+
+            checkEnemyDefeated();
+
+            if (!enemy.isDefeated() && enemyResponds) {
+                battleLogArea.append("\n");
+                enemyTurn();
+            } else {
+                battleLogArea.append("\n");
+            }
+
+            return;
+        }
+
+        if ("Wizard".equals(character.getCharacterClass()) && !wizardPassiveUsed) {
+            wizardPassiveUsed = true;
+
+            int weaponDice = getWeaponDamageDice();
+            int damageRoll = rollDice(weaponDice);
+            int damageModifier = calculateAbilityModifierForAttack();
+            int damage = damageRoll + damageModifier;
+
+            if (damage < 1) {
+                damage = 1;
+            }
+
+            enemy.takeDamage(damage);
+            updateEnemyHpLabel();
+
+            battleLogArea.append(character.getName() + " casts Arcane Missile!\n");
+            battleLogArea.append("Automatic Hit!\n");
+            battleLogArea.append("Damage Roll: " + damageRoll + " + " + damageModifier + " = " + damage + "\n");
+            battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
+
+            checkEnemyDefeated();
+
+            if (!enemy.isDefeated() && enemyResponds) {
+                battleLogArea.append("\n");
+                enemyTurn();
+            } else {
+                battleLogArea.append("\n");
+            }
+
+            return;
+        }
+
         int d20Roll = rollDice(20);
         int attackBonus = calculateAttackBonus();
         int totalAttack = d20Roll + attackBonus;
@@ -161,7 +253,7 @@ public class BattlePanel extends JPanel {
 
             checkPlayerDefeated();
 
-            if (!character.isDefeated()) {
+            if (!character.isDefeated() && enemyResponds) {
                 enemyTurn();
             }
 
@@ -184,22 +276,12 @@ public class BattlePanel extends JPanel {
             updateEnemyHpLabel();
 
             battleLogArea.append("Natural 20! Critical Hit!\n");
-            battleLogArea.append(
-                    "Critical Damage Roll: "
-                            + firstRoll
-                            + " + "
-                            + secondRoll
-                            + " + "
-                            + damageModifier
-                            + " = "
-                            + damage
-                            + "\n"
-            );
+            battleLogArea.append("Critical Damage Roll: " + firstRoll + " + " + secondRoll + " + " + damageModifier + " = " + damage + "\n");
             battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
             checkEnemyDefeated();
 
-            if (!enemy.isDefeated()) {
+            if (!enemy.isDefeated() && enemyResponds) {
                 battleLogArea.append("\n");
                 enemyTurn();
             } else {
@@ -222,24 +304,19 @@ public class BattlePanel extends JPanel {
                 damage = 1;
             }
 
+            battleLogArea.append("Hit!\n");
+            battleLogArea.append("Damage Roll: " + damageRoll + " + " + damageModifier);
+
+            battleLogArea.append(" = " + damage + "\n");
+
             enemy.takeDamage(damage);
             updateEnemyHpLabel();
 
-            battleLogArea.append("Hit!\n");
-            battleLogArea.append(
-                    "Damage Roll: "
-                            + damageRoll
-                            + " + "
-                            + damageModifier
-                            + " = "
-                            + damage
-                            + "\n"
-            );
             battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
             checkEnemyDefeated();
 
-            if (!enemy.isDefeated()) {
+            if (!enemy.isDefeated() && enemyResponds) {
                 battleLogArea.append("\n");
                 enemyTurn();
             } else {
@@ -247,7 +324,10 @@ public class BattlePanel extends JPanel {
             }
         } else {
             battleLogArea.append("Miss!\n\n");
-            enemyTurn();
+
+            if (enemyResponds) {
+                enemyTurn();
+            }
         }
     }
 
@@ -329,6 +409,9 @@ public class BattlePanel extends JPanel {
         if ("Druid".equals(character.getCharacterClass())
                 && "Quarterstaff".equals(character.getWeapon())) {
             ac += 1;
+        }
+        if ("Druid".equals(character.getCharacterClass())) {
+            ac += 2;
         }
 
         return ac;
