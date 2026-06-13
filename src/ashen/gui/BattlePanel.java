@@ -10,6 +10,8 @@ public class BattlePanel extends JPanel {
 
     private GameCharacter character;
     private Enemy enemy;
+    private int playerMaxHp;
+    private int playerCurrentHp;
 
     private JLabel playerHpLabel;
     private JLabel playerAcLabel;
@@ -22,6 +24,10 @@ public class BattlePanel extends JPanel {
     public BattlePanel(GameCharacter character) {
         this.character = character;
         this.enemy = new Enemy("Goblin", 10, 12, 2);
+
+        this.playerMaxHp = calculateHP();
+        this.playerCurrentHp = playerMaxHp;
+
         layoutComponents();
     }
 
@@ -78,7 +84,7 @@ public class BattlePanel extends JPanel {
                 "Player"
         ));
 
-        playerHpLabel = new JLabel("HP: " + calculateHP() + "/" + calculateHP());
+        playerHpLabel = new JLabel("HP: " + playerCurrentHp + "/" + playerMaxHp);
         playerAcLabel = new JLabel("AC: " + calculateAC());
 
         panel.add(new JLabel("Name: " + character.getName()));
@@ -121,41 +127,90 @@ public class BattlePanel extends JPanel {
 
         if (d20Roll == 1) {
             battleLogArea.append("Natural 1! Critical Miss!\n\n");
+            enemyTurn();
             return;
         }
 
         if (d20Roll == 20) {
-            int damage = calculateCriticalDamage();
+            int weaponDice = getWeaponDamageDice();
+            int firstRoll = rollDice(weaponDice);
+            int secondRoll = rollDice(weaponDice);
+            int damageModifier = calculateAbilityModifierForAttack();
+
+            int damage = firstRoll + secondRoll + damageModifier;
+
+            if (damage < 1) {
+                damage = 1;
+            }
 
             enemy.takeDamage(damage);
             updateEnemyHpLabel();
 
             battleLogArea.append("Natural 20! Critical Hit!\n");
-            battleLogArea.append("Damage: " + damage + "\n");
+            battleLogArea.append(
+                    "Critical Damage Roll: "
+                            + firstRoll
+                            + " + "
+                            + secondRoll
+                            + " + "
+                            + damageModifier
+                            + " = "
+                            + damage
+                            + "\n"
+            );
             battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
             checkEnemyDefeated();
 
-            battleLogArea.append("\n");
+            if (!enemy.isDefeated()) {
+                battleLogArea.append("\n");
+                enemyTurn();
+            } else {
+                battleLogArea.append("\n");
+            }
+
             return;
         }
 
         battleLogArea.append("Attack Roll: " + d20Roll + " + " + attackBonus + " = " + totalAttack + "\n");
 
         if (totalAttack >= enemy.getArmorClass()) {
-            int damage = calculateDamage();
+            int weaponDice = getWeaponDamageDice();
+            int damageRoll = rollDice(weaponDice);
+            int damageModifier = calculateAbilityModifierForAttack();
+
+            int damage = damageRoll + damageModifier;
+
+            if (damage < 1) {
+                damage = 1;
+            }
 
             enemy.takeDamage(damage);
             updateEnemyHpLabel();
 
-            battleLogArea.append("Hit! Damage: " + damage + "\n");
+            battleLogArea.append("Hit!\n");
+            battleLogArea.append(
+                    "Damage Roll: "
+                            + damageRoll
+                            + " + "
+                            + damageModifier
+                            + " = "
+                            + damage
+                            + "\n"
+            );
             battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
             checkEnemyDefeated();
 
-            battleLogArea.append("\n");
+            if (!enemy.isDefeated()) {
+                battleLogArea.append("\n");
+                enemyTurn();
+            } else {
+                battleLogArea.append("\n");
+            }
         } else {
             battleLogArea.append("Miss!\n\n");
+            enemyTurn();
         }
     }
 
@@ -297,5 +352,99 @@ public class BattlePanel extends JPanel {
         }
 
         return String.valueOf(modifier);
+    }
+
+    private void enemyTurn() {
+        int d20Roll = rollDice(20);
+        int attackBonus = enemy.getAttackBonus();
+        int totalAttack = d20Roll + attackBonus;
+
+        battleLogArea.append(enemy.getName() + " attacks " + character.getName() + ".\n");
+        battleLogArea.append("Attack Roll: " + d20Roll + " + " + attackBonus + " = " + totalAttack + "\n");
+
+        if (d20Roll == 1) {
+            int selfDamage = rollDice(4);
+
+            enemy.takeDamage(selfDamage);
+            updateEnemyHpLabel();
+
+            battleLogArea.append("Natural 1! Critical Miss!\n");
+            battleLogArea.append(enemy.getName() + " takes " + selfDamage + " self-damage.\n");
+            battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
+
+            checkEnemyDefeated();
+
+            battleLogArea.append("\n");
+            return;
+        }
+
+        if (d20Roll == 20) {
+            int firstRoll = rollDice(6);
+            int secondRoll = rollDice(6);
+            int damageModifier = enemy.getAttackBonus();
+            int damage = firstRoll + secondRoll + damageModifier;
+
+            damagePlayer(damage);
+
+            battleLogArea.append("Natural 20! Critical Hit!\n");
+            battleLogArea.append(
+                    "Critical Damage Roll: "
+                            + firstRoll
+                            + " + "
+                            + secondRoll
+                            + " + "
+                            + damageModifier
+                            + " = "
+                            + damage
+                            + "\n"
+            );
+            battleLogArea.append(character.getName() + " HP: " + playerCurrentHp + "/" + playerMaxHp + "\n");
+
+            checkPlayerDefeated();
+            battleLogArea.append("\n");
+            return;
+        }
+
+        if (totalAttack >= calculateAC()) {
+            int damageRoll = rollDice(6);
+            int damageModifier = enemy.getAttackBonus();
+            int damage = damageRoll + damageModifier;
+
+            damagePlayer(damage);
+
+            battleLogArea.append("Hit!\n");
+            battleLogArea.append(
+                    "Damage Roll: "
+                            + damageRoll
+                            + " + "
+                            + damageModifier
+                            + " = "
+                            + damage
+                            + "\n"
+            );
+            battleLogArea.append(character.getName() + " HP: " + playerCurrentHp + "/" + playerMaxHp + "\n");
+
+            checkPlayerDefeated();
+            battleLogArea.append("\n");
+        } else {
+            battleLogArea.append("Miss!\n\n");
+        }
+    }
+
+    private void damagePlayer(int damage) {
+        playerCurrentHp -= damage;
+
+        if (playerCurrentHp < 0) {
+            playerCurrentHp = 0;
+        }
+
+        playerHpLabel.setText("HP: " + playerCurrentHp + "/" + playerMaxHp);
+    }
+
+    private void checkPlayerDefeated() {
+        if (playerCurrentHp <= 0) {
+            battleLogArea.append(character.getName() + " has been defeated!\n");
+            attackButton.setEnabled(false);
+        }
     }
 }
