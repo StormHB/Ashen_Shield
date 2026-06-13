@@ -29,6 +29,13 @@ public class CharacterCreationPanel extends JPanel {
     private JLabel wisdomValueLabel;
     private JLabel charismaValueLabel;
 
+    private JLabel strengthModifierLabel;
+    private JLabel dexterityModifierLabel;
+    private JLabel constitutionModifierLabel;
+    private JLabel intelligenceModifierLabel;
+    private JLabel wisdomModifierLabel;
+    private JLabel charismaModifierLabel;
+
     public CharacterCreationPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         layoutComponents();
@@ -123,6 +130,13 @@ public class CharacterCreationPanel extends JPanel {
         wisdomValueLabel = new JLabel(String.valueOf(wisdom));
         charismaValueLabel = new JLabel(String.valueOf(charisma));
 
+        strengthModifierLabel = new JLabel(formatModifier(calculateModifier(strength)));
+        dexterityModifierLabel = new JLabel(formatModifier(calculateModifier(dexterity)));
+        constitutionModifierLabel = new JLabel(formatModifier(calculateModifier(constitution)));
+        intelligenceModifierLabel = new JLabel(formatModifier(calculateModifier(intelligence)));
+        wisdomModifierLabel = new JLabel(formatModifier(calculateModifier(wisdom)));
+        charismaModifierLabel = new JLabel(formatModifier(calculateModifier(charisma)));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.anchor = GridBagConstraints.CENTER;
@@ -134,17 +148,17 @@ public class CharacterCreationPanel extends JPanel {
 
         gbc.gridwidth = 1;
 
-        addStatRow(statsPanel, gbc, 1, "STR", strengthValueLabel);
-        addStatRow(statsPanel, gbc, 2, "DEX", dexterityValueLabel);
-        addStatRow(statsPanel, gbc, 3, "CON", constitutionValueLabel);
-        addStatRow(statsPanel, gbc, 4, "INT", intelligenceValueLabel);
-        addStatRow(statsPanel, gbc, 5, "WIS", wisdomValueLabel);
-        addStatRow(statsPanel, gbc, 6, "CHA", charismaValueLabel);
+        addStatRow(statsPanel, gbc, 1, "STR", strengthValueLabel, strengthModifierLabel);
+        addStatRow(statsPanel, gbc, 2, "DEX", dexterityValueLabel, dexterityModifierLabel);
+        addStatRow(statsPanel, gbc, 3, "CON", constitutionValueLabel, constitutionModifierLabel);
+        addStatRow(statsPanel, gbc, 4, "INT", intelligenceValueLabel, intelligenceModifierLabel);
+        addStatRow(statsPanel, gbc, 5, "WIS", wisdomValueLabel, wisdomModifierLabel);
+        addStatRow(statsPanel, gbc, 6, "CHA", charismaValueLabel, charismaModifierLabel);
 
         panel.add(statsPanel, BorderLayout.NORTH);
     }
 
-    private void addStatRow(JPanel panel, GridBagConstraints gbc, int row, String statName, JLabel valueLabel) {
+    private void addStatRow(JPanel panel, GridBagConstraints gbc, int row, String statName, JLabel valueLabel, JLabel modifierLabel) {
         JButton minusButton = new JButton("-");
         JButton plusButton = new JButton("+");
 
@@ -166,6 +180,10 @@ public class CharacterCreationPanel extends JPanel {
 
         gbc.gridx = 3;
         panel.add(plusButton, gbc);
+
+        gbc.gridx = 4;
+        modifierLabel.setPreferredSize(new Dimension(30, 25));
+        panel.add(modifierLabel, gbc);
     }
 
     private void increaseStat(JLabel valueLabel) {
@@ -176,6 +194,7 @@ public class CharacterCreationPanel extends JPanel {
             pointsRemaining--;
             valueLabel.setText(String.valueOf(currentValue));
             updatePointsRemainingLabel();
+            updateModifierLabels();
         }
     }
 
@@ -187,10 +206,31 @@ public class CharacterCreationPanel extends JPanel {
             pointsRemaining++;
             valueLabel.setText(String.valueOf(currentValue));
             updatePointsRemainingLabel();
+            updateModifierLabels();
         }
     }
 
     private void updatePointsRemainingLabel() {
         pointsRemainingLabel.setText("Points Remaining: " + pointsRemaining);
+    }
+
+    private int calculateModifier(int statValue) {
+        return Math.floorDiv(statValue - 10, 2);
+    }
+
+    private String formatModifier(int modifier) {
+        if (modifier >= 0) {
+            return "+" + modifier;
+        }
+        return String.valueOf(modifier);
+    }
+
+    private void updateModifierLabels() {
+        strengthModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(strengthValueLabel.getText()))));
+        dexterityModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(dexterityValueLabel.getText()))));
+        constitutionModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(constitutionValueLabel.getText()))));
+        intelligenceModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(intelligenceValueLabel.getText()))));
+        wisdomModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(wisdomValueLabel.getText()))));
+        charismaModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(charismaValueLabel.getText()))));
     }
 }
