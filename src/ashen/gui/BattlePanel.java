@@ -83,9 +83,14 @@ public class BattlePanel extends JPanel {
         saveAsButton.setPreferredSize(new Dimension(120, 40));
         saveAsButton.addActionListener(e -> saveCharacterAs());
 
+        JButton characterSheetButton = new JButton("Character Sheet");
+        characterSheetButton.setPreferredSize(new Dimension(160, 40));
+        characterSheetButton.addActionListener(e -> showCharacterSheet());
+
         actionPanel.add(attackButton);
         actionPanel.add(saveButton);
         actionPanel.add(saveAsButton);
+        actionPanel.add(characterSheetButton);
 
         add(actionPanel, BorderLayout.SOUTH);
 
@@ -529,6 +534,91 @@ public class BattlePanel extends JPanel {
                         JOptionPane.ERROR_MESSAGE
                 );
             }
+        }
+    }
+
+    private void showCharacterSheet() {
+        JTextArea sheetArea = new JTextArea();
+        sheetArea.setEditable(false);
+        sheetArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+
+        sheetArea.setText(
+                "CHARACTER SHEET\n" +
+                        "----------------\n" +
+                        "Name: " + character.getName() + "\n" +
+                        "Race: " + character.getRace() + "\n" +
+                        "Race Bonus: " + getRaceBonusDescription() + "\n" +
+                        "Class: " + character.getCharacterClass() + "\n\n" +
+
+                        "HP: " + playerCurrentHp + "/" + playerMaxHp + "\n" +
+                        "AC: " + calculateAC() + "\n" +
+                        "Attack Bonus: " + formatModifier(calculateAttackBonus()) + "\n\n" +
+
+                        "STR: " + character.getStats().getStrength() + " (" + formatModifier(calculateModifier(character.getStats().getStrength())) + ")\n" +
+                        "DEX: " + character.getStats().getDexterity() + " (" + formatModifier(calculateModifier(character.getStats().getDexterity())) + ")\n" +
+                        "CON: " + character.getStats().getConstitution() + " (" + formatModifier(calculateModifier(character.getStats().getConstitution())) + ")\n" +
+                        "INT: " + character.getStats().getIntelligence() + " (" + formatModifier(calculateModifier(character.getStats().getIntelligence())) + ")\n" +
+                        "WIS: " + character.getStats().getWisdom() + " (" + formatModifier(calculateModifier(character.getStats().getWisdom())) + ")\n" +
+                        "LCK: " + character.getStats().getLuck() + " (" + formatModifier(calculateModifier(character.getStats().getLuck())) + ")\n\n" +
+
+                        "Equipment\n" +
+                        "---------\n" +
+                        "Weapon: " + character.getWeapon()
+                        + " ("
+                        + getWeaponDamageDescription()
+                        + ")\n" +
+                        "Armor: " + character.getArmor() + "\n" +
+                        "Shield: " + (character.hasShield() ? "Yes" : "No")
+        );
+
+        JOptionPane.showMessageDialog(
+                this,
+                new JScrollPane(sheetArea),
+                "Character Sheet",
+                JOptionPane.PLAIN_MESSAGE
+        );
+    }
+
+    private String getRaceBonusDescription() {
+
+        switch (character.getRace()) {
+            case "Human":
+                return "+1 STR, +1 CON, +1 LCK";
+
+            case "Elf":
+                return "+2 DEX, +1 INT";
+
+            case "Dwarf":
+                return "+2 CON, +1 WIS";
+
+            case "Half-Orc":
+                return "+2 STR, +1 CON";
+
+            case "Dragonborn":
+                return "+2 STR, +1 LCK";
+
+            default:
+                return "None";
+        }
+    }
+
+    private String getWeaponDamageDescription() {
+
+        switch (character.getWeapon()) {
+            case "Dagger":
+                return "1d4";
+
+            case "Scimitar":
+            case "Quarterstaff":
+            case "Shortbow":
+                return "1d6";
+
+            case "Longsword":
+            case "Longbow":
+                return "1d8";
+
+            default:
+                return "?";
         }
     }
 }
