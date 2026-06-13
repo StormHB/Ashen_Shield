@@ -46,9 +46,11 @@ public class MainFrame extends JFrame {
     }
 
     public void showBattle(GameCharacter character) {
+        showBattle(character, 0);
+    }
 
-        setContentPane(new BattlePanel(character));
-
+    public void showBattle(GameCharacter character, int enemyIndex) {
+        setContentPane(new BattlePanel(this, character, enemyIndex));
         revalidate();
         repaint();
     }

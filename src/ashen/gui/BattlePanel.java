@@ -27,13 +27,18 @@ public class BattlePanel extends JPanel {
 
     private SaveLoadService saveLoadService;
 
-    public BattlePanel(GameCharacter character) {
+    private MainFrame mainFrame;
+
+    public BattlePanel(MainFrame mainFrame, GameCharacter character, int enemyIndex) {
+        this.mainFrame = mainFrame;
         this.character = character;
+        this.saveLoadService = new SaveLoadService();
+
         createEnemies();
+        this.currentEnemyIndex = enemyIndex;
         this.enemy = enemies[currentEnemyIndex];
 
         layoutComponents();
-        saveLoadService = new SaveLoadService();
     }
 
     private void layoutComponents() {
