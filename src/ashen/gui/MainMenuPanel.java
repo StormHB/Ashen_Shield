@@ -33,6 +33,7 @@ public class MainMenuPanel extends JPanel {
         JButton loadCharacterButton = createMenuButton("Load Character");
         JButton exitButton = createMenuButton("Exit");
 
+        loadCharacterButton.addActionListener(e -> mainFrame.loadCharacter());
         newCharacterButton.addActionListener(e -> mainFrame.showCharacterCreation());
         exitButton.addActionListener(e -> System.exit(0));
 

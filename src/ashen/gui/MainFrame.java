@@ -1,8 +1,11 @@
 package ashen.gui;
 
 import ashen.model.GameCharacter;
+import ashen.service.SaveLoadService;
 
-import javax.smartcardio.Card;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.io.File;
 import javax.swing.*;
 import java.awt.*;
 
@@ -48,5 +51,30 @@ public class MainFrame extends JFrame {
 
         revalidate();
         repaint();
+    }
+
+    public void loadCharacter() {
+        JFileChooser fileChooser = new JFileChooser("DATA");
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+
+            try {
+                SaveLoadService saveLoadService = new SaveLoadService();
+                GameCharacter character = saveLoadService.loadCharacter(selectedFile.getPath());
+
+                showBattle(character);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Failed to load character.",
+                        "Load Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
     }
 }
