@@ -37,6 +37,12 @@ public class MainFrame extends JFrame {
         contentPane.add(new CharacterCreationPanel(this), "characterCreation");
     }
 
+    public void showDefeatPanel(GameCharacter character) {
+        setContentPane(new DefeatPanel(this, character));
+        revalidate();
+        repaint();
+    }
+
     public void showMainMenu() {
         setContentPane(new MainMenuPanel(this));
         revalidate();

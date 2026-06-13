@@ -479,9 +479,17 @@ public class BattlePanel extends JPanel {
     }
 
     private void checkPlayerDefeated() {
+
         if (character.isDefeated()) {
-            battleLogArea.append(character.getName() + " has been defeated!\n");
+
+            battleLogArea.append(
+                    character.getName()
+                            + " has been defeated!\n"
+            );
+
             attackButton.setEnabled(false);
+
+            mainFrame.showDefeatPanel(character);
         }
     }
 
