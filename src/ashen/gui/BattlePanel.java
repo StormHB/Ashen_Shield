@@ -445,7 +445,7 @@ public class BattlePanel extends JPanel {
 
         if (totalAttack >= calculateAC()) {
             int damageRoll = rollDice(6);
-            int damageModifier = enemy.getAttackBonus();
+            int damageModifier = calculateEnemyDamageModifier();
             int damage = damageRoll + damageModifier;
 
             damagePlayer(damage);
@@ -652,7 +652,31 @@ public class BattlePanel extends JPanel {
                 new Enemy("Skeleton", 15, 13, 3),
                 new Enemy("Orc", 22, 14, 3),
                 new Enemy("Hobgoblin", 30, 15, 4),
-                new Enemy("Young Dragon", 45, 17, 5)
+                new Enemy("Young Dragon", 40, 16, 5)
         };
+    }
+
+    private int calculateEnemyDamageModifier() {
+        if ("Goblin".equals(enemy.getName())) {
+            return 1;
+        }
+
+        if ("Skeleton".equals(enemy.getName())) {
+            return 1;
+        }
+
+        if ("Orc".equals(enemy.getName())) {
+            return 2;
+        }
+
+        if ("Hobgoblin".equals(enemy.getName())) {
+            return 2;
+        }
+
+        if ("Young Dragon".equals(enemy.getName())) {
+            return 4;
+        }
+
+        return 1;
     }
 }

@@ -134,7 +134,7 @@ public class VictoryPanel extends JPanel {
 
     private void shortRest(JLabel hpLabel) {
         int missingHp = character.getMaxHp() - character.getCurrentHp();
-        int healing = missingHp / 2;
+        int healing = (missingHp + 1) / 2;
 
         if (healing < 4 && missingHp > 0) {
             healing = 4;
