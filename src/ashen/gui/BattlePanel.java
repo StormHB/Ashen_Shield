@@ -14,7 +14,7 @@ public class BattlePanel extends JPanel {
     private GameCharacter character;
     private Enemy enemy;
 
-    private int currentBattleIndex = 0;
+    private int currentEnemyIndex = 0;
     private Enemy[] enemies;
 
     private JLabel playerHpLabel;
@@ -29,7 +29,8 @@ public class BattlePanel extends JPanel {
 
     public BattlePanel(GameCharacter character) {
         this.character = character;
-        this.enemy = new Enemy("Goblin", 10, 12, 2);
+        createEnemies();
+        this.enemy = enemies[currentEnemyIndex];
 
         layoutComponents();
         saveLoadService = new SaveLoadService();
@@ -92,7 +93,7 @@ public class BattlePanel extends JPanel {
 
         add(actionPanel, BorderLayout.SOUTH);
 
-        battleLogArea.append("Battle started!\n");
+        battleLogArea.append("Battle " + (currentEnemyIndex + 1) + "/" + enemies.length + " started!\n");
         battleLogArea.append(character.getName() + " encounters " + enemy.getName() + ".\n\n");
     }
 
