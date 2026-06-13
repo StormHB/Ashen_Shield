@@ -156,6 +156,16 @@ public class CharacterCreationPanel extends JPanel {
         addStatRow(statsPanel, gbc, 6, "CHA", charismaValueLabel, charismaModifierLabel);
 
         panel.add(statsPanel, BorderLayout.NORTH);
+
+        JButton randomizeButton = new JButton("Randomize Stats");
+        randomizeButton.addActionListener(e -> randomizeStats());
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.gridwidth = 5;
+        gbc.insets = new Insets(20, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        statsPanel.add(randomizeButton, gbc);
     }
 
     private void addStatRow(JPanel panel, GridBagConstraints gbc, int row, String statName, JLabel valueLabel, JLabel modifierLabel) {
@@ -232,5 +242,36 @@ public class CharacterCreationPanel extends JPanel {
         intelligenceModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(intelligenceValueLabel.getText()))));
         wisdomModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(wisdomValueLabel.getText()))));
         charismaModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(charismaValueLabel.getText()))));
+    }
+
+    private void randomizeStats() {
+        resetStats();
+
+        while (pointsRemaining > 0) {
+            int randomStat = (int)(Math.random() * 6);
+
+            switch(randomStat) {
+                case 0 -> increaseStat(strengthValueLabel);
+                case 1 -> increaseStat(dexterityValueLabel);
+                case 2 -> increaseStat(constitutionValueLabel);
+                case 3 -> increaseStat(intelligenceValueLabel);
+                case 4 -> increaseStat(wisdomValueLabel);
+                case 5 -> increaseStat(charismaValueLabel);
+            }
+        }
+    }
+
+    private void resetStats() {
+        pointsRemaining = 12;
+
+        strengthValueLabel.setText("10");
+        dexterityValueLabel.setText("10");
+        constitutionValueLabel.setText("10");
+        intelligenceValueLabel.setText("10");
+        wisdomValueLabel.setText("10");
+        charismaValueLabel.setText("10");
+
+        updatePointsRemainingLabel();
+        updateModifierLabels();
     }
 }
