@@ -38,11 +38,15 @@ public class MainFrame extends JFrame {
     }
 
     public void showMainMenu() {
-        cardLayout.show(contentPane, "mainMenu");
+        setContentPane(new MainMenuPanel(this));
+        revalidate();
+        repaint();
     }
 
     public void showCharacterCreation() {
-        cardLayout.show(contentPane, "characterCreation");
+        setContentPane(new CharacterCreationPanel(this));
+        revalidate();
+        repaint();
     }
 
     public void showBattle(GameCharacter character) {
@@ -67,6 +71,8 @@ public class MainFrame extends JFrame {
                 SaveLoadService saveLoadService = new SaveLoadService();
                 GameCharacter character = saveLoadService.loadCharacter(selectedFile.getPath());
 
+                character.restoreFullHp();
+
                 showBattle(character);
 
             } catch (Exception e) {
@@ -78,5 +84,11 @@ public class MainFrame extends JFrame {
                 );
             }
         }
+    }
+
+    public void showVictoryPanel(GameCharacter character, int defeatedEnemyIndex, String defeatedEnemyName) {
+        setContentPane(new VictoryPanel(this, character, defeatedEnemyIndex, defeatedEnemyName));
+        revalidate();
+        repaint();
     }
 }

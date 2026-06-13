@@ -86,4 +86,8 @@ public class GameCharacter implements Serializable {
     public boolean isDefeated() {
         return currentHp <= 0;
     }
+
+    public void restoreFullHp() {
+        currentHp = maxHp;
+    }
 }

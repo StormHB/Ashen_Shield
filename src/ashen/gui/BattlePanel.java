@@ -151,8 +151,20 @@ public class BattlePanel extends JPanel {
         battleLogArea.append(character.getName() + " attacks " + enemy.getName() + ".\n");
 
         if (d20Roll == 1) {
-            battleLogArea.append("Natural 1! Critical Miss!\n\n");
-            enemyTurn();
+            int selfDamage = rollDice(4);
+
+            damagePlayer(selfDamage);
+
+            battleLogArea.append("Natural 1! Critical Miss!\n");
+            battleLogArea.append(character.getName() + " takes " + selfDamage + " self-damage.\n");
+            battleLogArea.append(character.getName() + " HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n\n");
+
+            checkPlayerDefeated();
+
+            if (!character.isDefeated()) {
+                enemyTurn();
+            }
+
             return;
         }
 
@@ -247,6 +259,7 @@ public class BattlePanel extends JPanel {
         if (enemy.isDefeated()) {
             battleLogArea.append(enemy.getName() + " has been defeated!\n");
             attackButton.setEnabled(false);
+            mainFrame.showVictoryPanel(character, currentEnemyIndex, enemy.getName());
         }
     }
 
@@ -629,9 +642,9 @@ public class BattlePanel extends JPanel {
         enemies = new Enemy[]{
                 new Enemy("Goblin", 10, 12, 2),
                 new Enemy("Skeleton", 15, 13, 3),
-                new Enemy("Orc", 22, 14, 4),
-                new Enemy("Hobgoblin", 30, 15, 5),
-                new Enemy("Young Dragon", 45, 17, 7)
+                new Enemy("Orc", 22, 14, 3),
+                new Enemy("Hobgoblin", 30, 15, 4),
+                new Enemy("Young Dragon", 45, 17, 5)
         };
     }
 }
