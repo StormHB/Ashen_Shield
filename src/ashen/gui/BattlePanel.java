@@ -2,6 +2,7 @@ package ashen.gui;
 
 import ashen.model.Enemy;
 import ashen.model.GameCharacter;
+import ashen.service.SaveLoadService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +22,8 @@ public class BattlePanel extends JPanel {
     private JTextArea battleLogArea;
     private JButton attackButton;
 
+    private SaveLoadService saveLoadService;
+
     public BattlePanel(GameCharacter character) {
         this.character = character;
         this.enemy = new Enemy("Goblin", 10, 12, 2);
@@ -29,6 +32,7 @@ public class BattlePanel extends JPanel {
         this.playerCurrentHp = playerMaxHp;
 
         layoutComponents();
+        saveLoadService = new SaveLoadService();
     }
 
     private void layoutComponents() {
@@ -69,7 +73,12 @@ public class BattlePanel extends JPanel {
         attackButton.addActionListener(e -> handleAttack());
         attackButton.setPreferredSize(new Dimension(120, 40));
 
+        JButton saveButton = new JButton("Save");
+        saveButton.setPreferredSize(new Dimension(120, 40));
+        saveButton.addActionListener(e -> saveCharacter());
+
         actionPanel.add(attackButton);
+        actionPanel.add(saveButton);
 
         add(actionPanel, BorderLayout.SOUTH);
 
@@ -445,6 +454,32 @@ public class BattlePanel extends JPanel {
         if (playerCurrentHp <= 0) {
             battleLogArea.append(character.getName() + " has been defeated!\n");
             attackButton.setEnabled(false);
+        }
+    }
+
+    private void saveCharacter() {
+
+        try {
+
+            String filePath =
+                    "DATA/" + character.getName() + ".ser";
+
+            saveLoadService.saveCharacter(
+                    character,
+                    filePath
+            );
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Character saved successfully."
+            );
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Failed to save character."
+            );
         }
     }
 }
