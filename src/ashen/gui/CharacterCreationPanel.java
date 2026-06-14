@@ -11,6 +11,7 @@ public class CharacterCreationPanel extends JPanel {
     private JTextField nameField;
     private JComboBox<String> raceBox;
     private JComboBox<String> classBox;
+    private JTextArea classDescriptionArea;
     private JComboBox<String> weaponBox;
     private JComboBox<String> armorBox;
 
@@ -109,10 +110,26 @@ public class CharacterCreationPanel extends JPanel {
         raceBonusLabel = new JLabel();
         raceBonusLabel.setFont(new Font("SansSerif", Font.ITALIC, 12));
         classBox = new JComboBox<>(new String[]{"Fighter", "Rogue", "Wizard", "Druid", "Ranger"});
-        classBox.addActionListener(e -> updateClassEquipment());
+
+        classDescriptionArea = new JTextArea(8, 24);
+        classDescriptionArea.setEditable(false);
+        classDescriptionArea.setLineWrap(true);
+        classDescriptionArea.setWrapStyleWord(true);
+        classDescriptionArea.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        classDescriptionArea.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+
+        classBox.addActionListener(e -> {
+            updateClassEquipment();
+            updateClassDescription();
+        });
+
         weaponBox = new JComboBox<>();
-        weaponBox.addActionListener(e -> updateShieldAvailability());
+        weaponBox.addActionListener(e -> {
+            updateShieldAvailability();
+            updateWeaponTooltip();
+        });
         armorBox = new JComboBox<>();
+        armorBox.addActionListener(e -> updateArmorTooltip());
         shieldCheckBox = new JCheckBox("Use Shield");
 
         raceBox.addActionListener(e -> applyRaceBonuses());
@@ -131,11 +148,20 @@ public class CharacterCreationPanel extends JPanel {
         formPanel.add(raceBonusLabel, gbc);
 
         addFormRow(formPanel, gbc, 3, "Class:", classBox);
-        addFormRow(formPanel, gbc, 4, "Weapon:", weaponBox);
-        addFormRow(formPanel, gbc, 5, "Armor:", armorBox);
-        addFormRow(formPanel, gbc, 6, "Shield:", shieldCheckBox);
+
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.weightx = 1;
+        formPanel.add(new JScrollPane(classDescriptionArea), gbc);
+
+        addFormRow(formPanel, gbc, 5, "Weapon:", weaponBox);
+        addFormRow(formPanel, gbc, 6, "Armor:", armorBox);
+        addFormRow(formPanel, gbc, 7, "Shield:", shieldCheckBox);
 
         updateClassEquipment();
+        updateClassDescription();
+        updateWeaponTooltip();
+        updateArmorTooltip();
         panel.add(formPanel, BorderLayout.NORTH);
     }
 
@@ -435,6 +461,8 @@ public class CharacterCreationPanel extends JPanel {
             addArmor("Leather Armor", "Hide Armor");
         }
 
+        updateWeaponTooltip();
+        updateArmorTooltip();
         updateShieldAvailability();
     }
 
@@ -507,5 +535,84 @@ public class CharacterCreationPanel extends JPanel {
         );
 
         mainFrame.showBattle(character);
+    }
+
+    private void updateClassDescription() {
+        String selectedClass = (String) classBox.getSelectedItem();
+
+        if ("Fighter".equals(selectedClass)) {
+            classDescriptionArea.setText(
+                    "Primary Stat: Strength\n" +
+                            "Recommended Stats: STR, CON\n\n" +
+                            "Class Ability: Shield Training\n" +
+                            "Effect: Can use heavy armor and shields."
+            );
+        } else if ("Rogue".equals(selectedClass)) {
+            classDescriptionArea.setText(
+                    "Primary Stat: Dexterity\n" +
+                            "Recommended Stats: DEX, CON\n\n" +
+                            "Class Ability: Sneak Attack\n" +
+                            "Effect: First attack each battle gains +1d8 damage."
+            );
+        } else if ("Wizard".equals(selectedClass)) {
+            classDescriptionArea.setText(
+                    "Primary Stat: Intelligence\n" +
+                            "Recommended Stats: INT, CON\n\n" +
+                            "Class Ability: Arcane Missile\n" +
+                            "Effect: First attack each battle automatically hits."
+            );
+        } else if ("Druid".equals(selectedClass)) {
+            classDescriptionArea.setText(
+                    "Primary Stat: Wisdom\n" +
+                            "Recommended Stats: WIS, CON\n\n" +
+                            "Class Ability: Mark of the Wild\n" +
+                            "Effect: Gain +2 Armor Class."
+            );
+        } else if ("Ranger".equals(selectedClass)) {
+            classDescriptionArea.setText(
+                    "Primary Stat: Dexterity\n" +
+                            "Recommended Stats: DEX, CON\n\n" +
+                            "Class Ability: Ambush\n" +
+                            "Effect: Free opening attack at the start of each battle."
+            );
+        }
+    }
+
+    private void updateWeaponTooltip() {
+        String selectedWeapon = (String) weaponBox.getSelectedItem();
+
+        if ("Longsword".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d8 | One-handed | Fighter weapon");
+        } else if ("Dagger".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d4 | One-handed | DEX weapon");
+        } else if ("Scimitar".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d6 | One-handed | DEX weapon");
+        } else if ("Quarterstaff".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d6 | Two-handed | Caster weapon");
+        } else if ("Shortbow".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d6 | Two-handed | DEX weapon");
+        } else if ("Longbow".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d8 | Two-handed | DEX weapon");
+        } else {
+            weaponBox.setToolTipText(null);
+        }
+    }
+
+    private void updateArmorTooltip() {
+        String selectedArmor = (String) armorBox.getSelectedItem();
+
+        if ("Cloth Robe".equals(selectedArmor)) {
+            armorBox.setToolTipText("AC: 10 + DEX modifier");
+        } else if ("Leather Armor".equals(selectedArmor)) {
+            armorBox.setToolTipText("AC: 11 + DEX modifier");
+        } else if ("Hide Armor".equals(selectedArmor)) {
+            armorBox.setToolTipText("AC: 12 + max 2 DEX modifier");
+        } else if ("Chain Mail".equals(selectedArmor)) {
+            armorBox.setToolTipText("AC: 16 | No DEX modifier");
+        } else if ("Plate Armor".equals(selectedArmor)) {
+            armorBox.setToolTipText("AC: 18 | No DEX modifier");
+        } else {
+            armorBox.setToolTipText(null);
+        }
     }
 }
