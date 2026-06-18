@@ -115,11 +115,16 @@ public class BattlePanel extends JPanel {
         characterSheetButton.setPreferredSize(new Dimension(160, 40));
         characterSheetButton.addActionListener(e -> showCharacterSheet());
 
+        JButton enemySheetButton = new JButton("Enemy Sheet");
+        enemySheetButton.setPreferredSize(new Dimension(140, 40));
+        enemySheetButton.addActionListener(e -> showEnemySheet());
+
         actionPanel.add(attackButton);
         actionPanel.add(saveButton);
         actionPanel.add(saveAsButton);
         actionPanel.add(exportLogButton);
         actionPanel.add(characterSheetButton);
+        actionPanel.add(enemySheetButton);
         actionPanel.add(nextButton);
 
         add(actionPanel, BorderLayout.SOUTH);
@@ -881,6 +886,30 @@ public class BattlePanel extends JPanel {
                 this,
                 new JScrollPane(sheetArea),
                 "Character Sheet",
+                JOptionPane.PLAIN_MESSAGE
+        );
+    }
+
+    private void showEnemySheet() {
+        JTextArea sheetArea = new JTextArea();
+        sheetArea.setEditable(false);
+        sheetArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+
+        sheetArea.setText(
+                "ENEMY SHEET\n" +
+                        "-----------\n" +
+                        "Name: " + enemy.getName() + "\n\n" +
+
+                        "HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n" +
+                        "AC: " + enemy.getArmorClass() + "\n" +
+                        "Attack Bonus: " + formatModifier(enemy.getAttackBonus()) + "\n" +
+                        "Damage: 1d6 + " + calculateEnemyDamageModifier()
+        );
+
+        JOptionPane.showMessageDialog(
+                this,
+                new JScrollPane(sheetArea),
+                "Enemy Sheet",
                 JOptionPane.PLAIN_MESSAGE
         );
     }
