@@ -453,7 +453,7 @@ public class CharacterCreationPanel extends JPanel {
             addArmor("Chain Mail", "Plate Armor");
         } else if ("Rogue".equals(selectedClass)) {
             addWeapons("Scimitar + Dagger", "Dual Daggers");
-            addArmor("Leather Armor");
+            addArmor("Leather Armor", "Leather Tunic");
         } else if ("Wizard".equals(selectedClass)) {
             addWeapons("Rod + Spellbook");
             addArmor("Cloth Robe");
@@ -462,7 +462,7 @@ public class CharacterCreationPanel extends JPanel {
             addArmor("Leather Armor", "Hide Armor");
         } else if ("Ranger".equals(selectedClass)) {
             addWeapons("Longbow");
-            addArmor("Leather Armor", "Hide Armor");
+            addArmor("Leather Armor", "Leather Tunic");
         }
 
         updateWeaponTooltip();
@@ -515,21 +515,45 @@ public class CharacterCreationPanel extends JPanel {
             return;
         }
 
-        int intelligence = Integer.parseInt(
-                intelligenceValueLabel.getText()
-        );
+        int strength = Integer.parseInt(strengthValueLabel.getText());
+        int dexterity = Integer.parseInt(dexterityValueLabel.getText());
+        int constitution = Integer.parseInt(constitutionValueLabel.getText());
+        int intelligence = Integer.parseInt(intelligenceValueLabel.getText());
+        int wisdom = Integer.parseInt(wisdomValueLabel.getText());
+        int luck = Integer.parseInt(luckValueLabel.getText());
 
-        if ("Wizard".equals(classBox.getSelectedItem())) {
+        String selectedClass = (String) classBox.getSelectedItem();
+        String selectedArmor = (String) armorBox.getSelectedItem();
+
+        if ("Wizard".equals(selectedClass)) {
             intelligence += 2;
         }
 
+        if ("Fighter".equals(selectedClass) && "Chain Mail".equals(selectedArmor)) {
+            strength += 2;
+        }
+
+        if (("Rogue".equals(selectedClass) || "Ranger".equals(selectedClass))
+                && "Leather Armor".equals(selectedArmor)) {
+            dexterity += 1;
+        }
+
+        if (("Rogue".equals(selectedClass) || "Ranger".equals(selectedClass))
+                && "Leather Tunic".equals(selectedArmor)) {
+            dexterity += 2;
+        }
+
+        if ("Druid".equals(selectedClass) && "Leather Armor".equals(selectedArmor)) {
+            wisdom += 1;
+        }
+
         Stats stats = new Stats(
-                Integer.parseInt(strengthValueLabel.getText()),
-                Integer.parseInt(dexterityValueLabel.getText()),
-                Integer.parseInt(constitutionValueLabel.getText()),
+                strength,
+                dexterity,
+                constitution,
                 intelligence,
-                Integer.parseInt(wisdomValueLabel.getText()),
-                Integer.parseInt(luckValueLabel.getText())
+                wisdom,
+                luck
         );
 
         boolean hasShield =
@@ -571,8 +595,7 @@ public class CharacterCreationPanel extends JPanel {
                             "Recommended Stats: INT, CON\n\n" +
                             "Class Ability: Arcane Precision\n" +
                             "Effect: Reroll attack rolls of 5 or lower.\n\n" +
-                            "Passive: Spellbook\n" +
-                            "Effect: Gain +2 INT."
+                            "Equipment Bonus: +2 INT from Spellbook."
             );
         } else if ("Druid".equals(selectedClass)) {
             classDescriptionArea.setText(
@@ -618,15 +641,17 @@ public class CharacterCreationPanel extends JPanel {
         String selectedArmor = (String) armorBox.getSelectedItem();
 
         if ("Cloth Robe".equals(selectedArmor)) {
-            armorBox.setToolTipText("AC: 10 + DEX modifier");
+            armorBox.setToolTipText("AC: 10 | +2 INT");
         } else if ("Leather Armor".equals(selectedArmor)) {
-            armorBox.setToolTipText("AC: 11 + DEX modifier");
+            armorBox.setToolTipText("AC: 14 | +1 main stat");
+        } else if ("Leather Tunic".equals(selectedArmor)) {
+            armorBox.setToolTipText("AC: 12 | +2 main stat");
         } else if ("Hide Armor".equals(selectedArmor)) {
-            armorBox.setToolTipText("AC: 12 + max 2 DEX modifier");
+            armorBox.setToolTipText("AC: 16");
         } else if ("Chain Mail".equals(selectedArmor)) {
-            armorBox.setToolTipText("AC: 16 | No DEX modifier");
+            armorBox.setToolTipText("AC: 15 | +2 STR");
         } else if ("Plate Armor".equals(selectedArmor)) {
-            armorBox.setToolTipText("AC: 18 | No DEX modifier");
+            armorBox.setToolTipText("AC: 17");
         } else {
             armorBox.setToolTipText(null);
         }

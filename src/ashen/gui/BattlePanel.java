@@ -557,20 +557,29 @@ public class BattlePanel extends JPanel {
 
         switch (character.getArmor()) {
             case "Cloth Robe":
-                ac = 10 + dexModifier;
+                ac = 10;
                 break;
+
+            case "Leather Tunic":
+                ac = 12;
+                break;
+
             case "Leather Armor":
-                ac = 11 + dexModifier;
+                ac = 14;
                 break;
+
             case "Hide Armor":
-                ac = 12 + Math.min(2, dexModifier);
-                break;
-            case "Chain Mail":
                 ac = 16;
                 break;
-            case "Plate Armor":
-                ac = 18;
+
+            case "Chain Mail":
+                ac = 15;
                 break;
+
+            case "Plate Armor":
+                ac = 17;
+                break;
+
             default:
                 ac = 10;
         }
