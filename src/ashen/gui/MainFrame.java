@@ -5,6 +5,7 @@ import ashen.service.SaveLoadService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 
 public class MainFrame extends JFrame {
@@ -38,6 +39,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showDefeatPanel(GameCharacter character) {
+        clearShortcuts();
         clearMenuBar();
         setContentPane(new DefeatPanel(this, character));
         revalidate();
@@ -45,6 +47,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showMainMenu() {
+        clearShortcuts();
         clearMenuBar();
         setContentPane(new MainMenuPanel(this));
         revalidate();
@@ -52,6 +55,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showCharacterCreation() {
+        clearShortcuts();
         clearMenuBar();
         setContentPane(new CharacterCreationPanel(this));
         revalidate();
@@ -64,6 +68,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showBattle(GameCharacter character, int enemyIndex) {
+        clearShortcuts();
         setContentPane(new BattlePanel(this, character, enemyIndex));
         revalidate();
         repaint();
@@ -105,6 +110,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showVictoryPanel(GameCharacter character, int defeatedEnemyIndex, String defeatedEnemyName) {
+        clearShortcuts();
         clearMenuBar();
         setContentPane(new VictoryPanel(this, character, defeatedEnemyIndex, defeatedEnemyName));
         revalidate();
@@ -125,5 +131,15 @@ public class MainFrame extends JFrame {
 
     private void clearMenuBar() {
         setJMenuBar(null);
+    }
+
+    private void clearShortcuts() {
+        JRootPane rootPane = getRootPane();
+
+        InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = rootPane.getActionMap();
+
+        inputMap.clear();
+        actionMap.clear();
     }
 }

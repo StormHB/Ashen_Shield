@@ -139,6 +139,9 @@ public class VictoryPanel extends JPanel {
     }
 
     private void shortRest(JLabel hpLabel) {
+
+        int hpBefore = character.getCurrentHp();
+
         int missingHp = character.getMaxHp() - character.getCurrentHp();
         int healing = (missingHp + 1) / 2;
 
@@ -148,12 +151,25 @@ public class VictoryPanel extends JPanel {
 
         character.heal(healing);
 
-        hpLabel.setText("Current HP: " + character.getCurrentHp() + "/" + character.getMaxHp());
+        int hpAfter = character.getCurrentHp();
+
+        hpLabel.setText("Current HP: " + hpAfter + "/" + character.getMaxHp());
         shortRestButton.setEnabled(false);
+
+        mainFrame.appendToCampaignBattleLog(
+                "\nShort Rest\n"
+                        + "Recovered "
+                        + (hpAfter - hpBefore)
+                        + " HP ("
+                        + hpBefore
+                        + " -> "
+                        + hpAfter
+                        + ")\n\n"
+        );
 
         JOptionPane.showMessageDialog(
                 this,
-                "Short Rest recovered " + healing + " HP."
+                "Short Rest recovered " + (hpAfter - hpBefore) + " HP."
         );
     }
 
