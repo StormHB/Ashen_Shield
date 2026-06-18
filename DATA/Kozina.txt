@@ -1,0 +1,187 @@
+Battle 1/5 started!
+Kozina encounters Goblin.
+
+Kozina attacks Goblin.
+Attack Roll: 7 + 7 = 14
+Hit!
+Damage Roll: Weapon 4 + DEX 5 = 9
+Poison Arrow: +2 poison damage. Total poison: 2
+Goblin HP: 1/10
+Poison Arrows deal 2 poison damage.
+Goblin HP: 0/10
+Goblin has been defeated!
+Battle 2/5 started!
+Kozina encounters Skeleton.
+
+Kozina attacks Skeleton.
+Poison Arrow: +2 poison damage. Total poison: 2
+Natural 20! Critical Hit!
+Critical Damage Roll: 1 + 3 + 5 = 9
+Skeleton HP: 6/15
+Poison Arrows deal 2 poison damage.
+Skeleton HP: 4/15
+
+Skeleton attacks Kozina.
+Attack Roll: 14 + 3 = 17
+Hit!
+Damage Roll: 5 + 1 = 6
+Kozina HP: 22/28
+
+Kozina attacks Skeleton.
+Attack Roll: 6 + 7 = 13
+Hit!
+Damage Roll: Weapon 3 + DEX 5 = 8
+Poison Arrow: +1 poison damage. Total poison: 3
+Skeleton HP: 0/15
+Skeleton has been defeated!
+Battle 3/5 started!
+Kozina encounters Orc.
+
+Kozina attacks Orc.
+Attack Roll: 15 + 7 = 22
+Hit!
+Damage Roll: Weapon 9 + DEX 5 = 14
+Poison Arrow: +2 poison damage. Total poison: 2
+Orc HP: 8/22
+Poison Arrows deal 2 poison damage.
+Orc HP: 6/22
+
+Orc attacks Kozina.
+Attack Roll: 17 + 3 = 20
+Hit!
+Damage Roll: 6 + 2 = 8
+Kozina HP: 14/28
+
+Kozina attacks Orc.
+Attack Roll: 18 + 7 = 25
+Hit!
+Damage Roll: Weapon 7 + DEX 5 = 12
+Poison Arrow: +2 poison damage. Total poison: 4
+Orc HP: 0/22
+Orc has been defeated!
+Battle 4/5 started!
+Kozina encounters Hobgoblin.
+
+Kozina attacks Hobgoblin.
+Attack Roll: 13 + 7 = 20
+Hit!
+Damage Roll: Weapon 5 + DEX 5 = 10
+Poison Arrow: +1 poison damage. Total poison: 1
+Hobgoblin HP: 20/30
+Poison Arrows deal 1 poison damage.
+Hobgoblin HP: 19/30
+
+Hobgoblin attacks Kozina.
+Attack Roll: 17 + 4 = 21
+Hit!
+Damage Roll: 2 + 2 = 4
+Kozina HP: 17/28
+
+Kozina attacks Hobgoblin.
+Poison Arrow: +1 poison damage. Total poison: 2
+Natural 20! Critical Hit!
+Critical Damage Roll: 3 + 3 + 5 = 11
+Hobgoblin HP: 8/30
+Poison Arrows deal 2 poison damage.
+Hobgoblin HP: 6/30
+
+Hobgoblin attacks Kozina.
+Attack Roll: 10 + 4 = 14
+Miss!
+
+Kozina attacks Hobgoblin.
+Attack Roll: 18 + 7 = 25
+Hit!
+Damage Roll: Weapon 7 + DEX 5 = 12
+Poison Arrow: +1 poison damage. Total poison: 3
+Hobgoblin HP: 0/30
+Hobgoblin has been defeated!
+Battle 5/5 started!
+Kozina encounters Young Dragon.
+
+Kozina attacks Young Dragon.
+Attack Roll: 7 + 7 = 14
+Miss!
+
+Young Dragon attacks Kozina.
+Attack Roll: 7 + 5 = 12
+Miss!
+
+Kozina attacks Young Dragon.
+Attack Roll: 15 + 7 = 22
+Hit!
+Damage Roll: Weapon 4 + DEX 5 = 9
+Poison Arrow: +1 poison damage. Total poison: 1
+Young Dragon HP: 31/40
+Poison Arrows deal 1 poison damage.
+Young Dragon HP: 30/40
+
+Young Dragon attacks Kozina.
+Attack Roll: 8 + 5 = 13
+Miss!
+
+Kozina attacks Young Dragon.
+Attack Roll: 2 + 7 = 9
+Miss!
+Poison Arrows deal 1 poison damage.
+Young Dragon HP: 29/40
+
+Young Dragon attacks Kozina.
+Attack Roll: 9 + 5 = 14
+Miss!
+
+Kozina attacks Young Dragon.
+Attack Roll: 7 + 7 = 14
+Miss!
+Poison Arrows deal 1 poison damage.
+Young Dragon HP: 28/40
+
+Young Dragon attacks Kozina.
+Attack Roll: 1 + 5 = 6
+Natural 1! Critical Miss!
+Young Dragon takes 4 self-damage.
+Young Dragon HP: 24/40
+
+Kozina attacks Young Dragon.
+Attack Roll: 3 + 7 = 10
+Miss!
+Poison Arrows deal 1 poison damage.
+Young Dragon HP: 23/40
+
+Young Dragon attacks Kozina.
+Attack Roll: 18 + 5 = 23
+Hit!
+Damage Roll: 5 + 4 = 9
+Kozina HP: 14/28
+
+Kozina attacks Young Dragon.
+Natural 1! Critical Miss!
+Kozina takes 4 self-damage.
+Kozina HP: 10/28
+
+Young Dragon attacks Kozina.
+Attack Roll: 18 + 5 = 23
+Hit!
+Damage Roll: 3 + 4 = 7
+Kozina HP: 3/28
+
+Kozina attacks Young Dragon.
+Attack Roll: 16 + 7 = 23
+Hit!
+Damage Roll: Weapon 6 + DEX 5 = 11
+Poison Arrow: +2 poison damage. Total poison: 3
+Young Dragon HP: 12/40
+Poison Arrows deal 3 poison damage.
+Young Dragon HP: 9/40
+
+Young Dragon attacks Kozina.
+Attack Roll: 7 + 5 = 12
+Miss!
+
+Kozina attacks Young Dragon.
+Attack Roll: 16 + 7 = 23
+Hit!
+Damage Roll: Weapon 10 + DEX 5 = 15
+Poison Arrow: +2 poison damage. Total poison: 5
+Young Dragon HP: 0/40
+Young Dragon has been defeated!

@@ -70,6 +70,14 @@ public class MainFrame extends JFrame {
 
     public void loadCharacter() {
         JFileChooser fileChooser = new JFileChooser("DATA");
+        fileChooser.setAcceptAllFileFilterUsed(true);
+
+        fileChooser.setFileFilter(
+                new javax.swing.filechooser.FileNameExtensionFilter(
+                        "Character Saves (*.ser)",
+                        "ser"
+                )
+        );
 
         int result = fileChooser.showOpenDialog(this);
 
