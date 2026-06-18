@@ -483,17 +483,13 @@ public class CharacterCreationPanel extends JPanel {
     }
 
     private void updateShieldAvailability() {
-        String selectedClass = (String) classBox.getSelectedItem();
         String selectedWeapon = (String) weaponBox.getSelectedItem();
 
-        boolean fighterSelected = "Fighter".equals(selectedClass);
-        boolean oneHandedWeapon = "Longsword".equals(selectedWeapon);
+        boolean shieldWeapon =
+                "Longsword + Shield".equals(selectedWeapon);
 
-        shieldCheckBox.setEnabled(fighterSelected && oneHandedWeapon);
-
-        if (!shieldCheckBox.isEnabled()) {
-            shieldCheckBox.setSelected(false);
-        }
+        shieldCheckBox.setEnabled(false);
+        shieldCheckBox.setSelected(shieldWeapon);
     }
 
     private void createCharacter() {
@@ -573,8 +569,10 @@ public class CharacterCreationPanel extends JPanel {
             classDescriptionArea.setText(
                     "Primary Stat: Intelligence\n" +
                             "Recommended Stats: INT, CON\n\n" +
-                            "Class Ability: True Sight\n" +
-                            "Effect: Gain +2 attack bonus with spells."
+                            "Class Ability: Arcane Precision\n" +
+                            "Effect: Reroll attack rolls of 5 or lower.\n\n" +
+                            "Passive: Spellbook\n" +
+                            "Effect: Gain +2 INT."
             );
         } else if ("Druid".equals(selectedClass)) {
             classDescriptionArea.setText(
@@ -587,8 +585,9 @@ public class CharacterCreationPanel extends JPanel {
             classDescriptionArea.setText(
                     "Primary Stat: Dexterity\n" +
                             "Recommended Stats: DEX, CON\n\n" +
-                            "Class Ability: Ambush\n" +
-                            "Effect: Free opening attack at the start of each battle."
+                            "Class Ability: Poison Arrows\n" +
+                            "Effect: Successful hits add stacking poison damage.\n" +
+                            "Poison triggers even if future attacks miss."
             );
         }
     }
@@ -596,20 +595,20 @@ public class CharacterCreationPanel extends JPanel {
     private void updateWeaponTooltip() {
         String selectedWeapon = (String) weaponBox.getSelectedItem();
 
-        if ("Longsword".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d8 | One-handed | STR weapon");
-        } else if ("Dagger".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d4 | +1 Attack Bonus | DEX weapon");
-        } else if ("Scimitar".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d6 | One-handed | DEX weapon");
+        if ("Longsword + Shield".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d8 + STR | Shield: +2 AC");
+        } else if ("Greatsword".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d12 + STR | Two-handed | No shield");
+        } else if ("Scimitar + Dagger".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d6 + DEX + 1d4 off-hand");
+        } else if ("Dual Daggers".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d4 + DEX + 1d4 off-hand | +2 Attack Bonus");
+        } else if ("Rod + Spellbook".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Fireball: 1d12 + INT | Spellbook: +2 INT");
         } else if ("Quarterstaff".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d8 | Two-handed | WIS weapon");
-        } else if ("Shortbow".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d6 | Two-handed | DEX weapon");
+            weaponBox.setToolTipText("Damage: 1d10 + WIS | Two-handed");
         } else if ("Longbow".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d10 | Two-handed | DEX weapon");
-        } else if ("Rod".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d10 | Spellcasting focus | INT weapon");
+            weaponBox.setToolTipText("Damage: 1d10 + DEX | Poison Arrows");
         } else {
             weaponBox.setToolTipText(null);
         }
