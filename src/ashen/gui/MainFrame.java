@@ -40,18 +40,21 @@ public class MainFrame extends JFrame {
     }
 
     public void showDefeatPanel(GameCharacter character) {
+        clearMenuBar();
         setContentPane(new DefeatPanel(this, character));
         revalidate();
         repaint();
     }
 
     public void showMainMenu() {
+        clearMenuBar();
         setContentPane(new MainMenuPanel(this));
         revalidate();
         repaint();
     }
 
     public void showCharacterCreation() {
+        clearMenuBar();
         setContentPane(new CharacterCreationPanel(this));
         revalidate();
         repaint();
@@ -104,6 +107,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showVictoryPanel(GameCharacter character, int defeatedEnemyIndex, String defeatedEnemyName) {
+        clearMenuBar();
         setContentPane(new VictoryPanel(this, character, defeatedEnemyIndex, defeatedEnemyName));
         revalidate();
         repaint();
@@ -119,5 +123,9 @@ public class MainFrame extends JFrame {
 
     public void clearCampaignBattleLog() {
         campaignBattleLog.setLength(0);
+    }
+
+    private void clearMenuBar() {
+        setJMenuBar(null);
     }
 }

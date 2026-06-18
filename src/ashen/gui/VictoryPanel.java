@@ -5,6 +5,7 @@ import ashen.service.SaveLoadService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class VictoryPanel extends JPanel {
 
@@ -61,11 +62,16 @@ public class VictoryPanel extends JPanel {
                 JLabel.CENTER
         );
 
-        shortRestButton = createMenuButton("Short Rest");
-        JButton nextBattleButton = createMenuButton("Next Battle");
+        shortRestButton = createMenuButton("Short Rest (R)");
+        JButton nextBattleButton = createMenuButton("Next Battle (N)");
         JButton mainMenuButton = createMenuButton("Main Menu");
         JButton saveButton = createMenuButton("Save Character");
         JButton exitButton = createMenuButton("Exit");
+
+        setupVictoryShortcuts(
+                shortRestButton,
+                nextBattleButton
+        );
 
         if (!campaignCompleted) {
             shortRestButton.addActionListener(e -> shortRest(hpLabel));
@@ -168,5 +174,47 @@ public class VictoryPanel extends JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+
+    private void setupVictoryShortcuts(
+            JButton shortRestButton,
+            JButton nextBattleButton
+    ) {
+
+        JRootPane rootPane = mainFrame.getRootPane();
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_R, 0),
+                "shortRest"
+        );
+
+        rootPane.getActionMap().put(
+                "shortRest",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (shortRestButton.isEnabled()) {
+                            shortRestButton.doClick();
+                        }
+                    }
+                }
+        );
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, 0),
+                "nextBattle"
+        );
+
+        rootPane.getActionMap().put(
+                "nextBattle",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (nextBattleButton.isEnabled()) {
+                            nextBattleButton.doClick();
+                        }
+                    }
+                }
+        );
     }
 }

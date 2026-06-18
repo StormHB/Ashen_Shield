@@ -8,6 +8,7 @@ import java.io.File;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.PrintWriter;
 
 public class BattlePanel extends JPanel {
@@ -51,6 +52,7 @@ public class BattlePanel extends JPanel {
     }
 
     private void layoutComponents() {
+        mainFrame.setJMenuBar(createBattleMenuBar());
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
@@ -84,11 +86,11 @@ public class BattlePanel extends JPanel {
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         actionPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
 
-        attackButton = new JButton("Attack");
+        attackButton = new JButton("Attack (A)");
         attackButton.addActionListener(e -> handleAttack());
         attackButton.setPreferredSize(new Dimension(120, 40));
 
-        nextButton = new JButton("Next");
+        nextButton = new JButton("Next (N)");
         nextButton.setPreferredSize(new Dimension(120, 40));
         nextButton.setVisible(false);
         nextButton.addActionListener(e -> {
@@ -120,17 +122,14 @@ public class BattlePanel extends JPanel {
         enemySheetButton.addActionListener(e -> showEnemySheet());
 
         actionPanel.add(attackButton);
-        actionPanel.add(saveButton);
-        actionPanel.add(saveAsButton);
-        actionPanel.add(exportLogButton);
-        actionPanel.add(characterSheetButton);
-        actionPanel.add(enemySheetButton);
         actionPanel.add(nextButton);
 
         add(actionPanel, BorderLayout.SOUTH);
 
         battleLogArea.append("Battle " + (currentEnemyIndex + 1) + "/" + enemies.length + " started!\n");
         battleLogArea.append(character.getName() + " encounters " + enemy.getName() + ".\n\n");
+
+        setupBattleShortcuts();
     }
 
     private JPanel createPlayerPanel() {
@@ -783,7 +782,7 @@ public class BattlePanel extends JPanel {
             playerDefeated = true;
             attackButton.setEnabled(false);
             nextButton.setVisible(true);
-            nextButton.setText("Continue");
+            nextButton.setText("Continue (N)");
             scrollBattleLogToBottom();
             saveCurrentBattleLogToCampaignLog();
         }
@@ -1048,5 +1047,140 @@ public class BattlePanel extends JPanel {
             mainFrame.appendToCampaignBattleLog(battleLogArea.getText());
             currentBattleLogSaved = true;
         }
+    }
+
+    private JMenuBar createBattleMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+
+        JMenuItem saveItem = new JMenuItem("Save");
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        saveItem.addActionListener(e -> saveCharacter());
+
+        JMenuItem saveAsItem = new JMenuItem("Save As");
+        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+        saveAsItem.addActionListener(e -> saveCharacterAs());
+
+        JMenuItem loadItem = new JMenuItem("Load");
+        loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
+        loadItem.addActionListener(e -> mainFrame.loadCharacter());
+
+        JMenuItem exportLogItem = new JMenuItem("Export Battle Log");
+        exportLogItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
+        exportLogItem.addActionListener(e -> exportBattleLog());
+
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
+        exitItem.addActionListener(e -> System.exit(0));
+
+        fileMenu.add(saveItem);
+        fileMenu.add(saveAsItem);
+        fileMenu.add(loadItem);
+        fileMenu.add(exportLogItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
+
+        JMenu sheetsMenu = new JMenu("Sheets");
+
+        JMenuItem characterSheetItem = new JMenuItem("Character Sheet");
+        characterSheetItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+        characterSheetItem.addActionListener(e -> showCharacterSheet());
+
+        JMenuItem enemySheetItem = new JMenuItem("Enemy Sheet");
+        enemySheetItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
+        enemySheetItem.addActionListener(e -> showEnemySheet());
+
+        sheetsMenu.add(characterSheetItem);
+        sheetsMenu.add(enemySheetItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(sheetsMenu);
+
+        return menuBar;
+    }
+
+    private void setupBattleShortcuts() {
+
+        JRootPane rootPane = mainFrame.getRootPane();
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_A, 0),
+                "attack"
+        );
+
+        rootPane.getActionMap().put(
+                "attack",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (attackButton.isEnabled()) {
+                            handleAttack();
+                        }
+                    }
+                }
+        );
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, 0),
+                "next"
+        );
+
+        rootPane.getActionMap().put(
+                "next",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (nextButton.isVisible() && nextButton.isEnabled()) {
+                            nextButton.doClick();
+                        }
+                    }
+                }
+        );
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK),
+                "exit"
+        );
+
+        rootPane.getActionMap().put(
+                "exit",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                }
+        );
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+                "characterSheet"
+        );
+
+        rootPane.getActionMap().put(
+                "characterSheet",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        showCharacterSheet();
+                    }
+                }
+        );
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK),
+                "enemySheet"
+        );
+
+        rootPane.getActionMap().put(
+                "enemySheet",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        showEnemySheet();
+                    }
+                }
+        );
     }
 }
