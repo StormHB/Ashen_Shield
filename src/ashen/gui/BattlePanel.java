@@ -8,12 +8,14 @@ import java.io.File;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.PrintWriter;
 
 public class BattlePanel extends JPanel {
 
     private GameCharacter character;
     private Enemy enemy;
     private boolean playerDefeated;
+    private boolean currentBattleLogSaved;
 
     private String lastDamageFormula;
     private String lastDamageDescription;
@@ -105,6 +107,10 @@ public class BattlePanel extends JPanel {
         saveAsButton.setPreferredSize(new Dimension(120, 40));
         saveAsButton.addActionListener(e -> saveCharacterAs());
 
+        JButton exportLogButton = new JButton("Export Log");
+        exportLogButton.setPreferredSize(new Dimension(130, 40));
+        exportLogButton.addActionListener(e -> exportBattleLog());
+
         JButton characterSheetButton = new JButton("Character Sheet");
         characterSheetButton.setPreferredSize(new Dimension(160, 40));
         characterSheetButton.addActionListener(e -> showCharacterSheet());
@@ -112,6 +118,7 @@ public class BattlePanel extends JPanel {
         actionPanel.add(attackButton);
         actionPanel.add(saveButton);
         actionPanel.add(saveAsButton);
+        actionPanel.add(exportLogButton);
         actionPanel.add(characterSheetButton);
         actionPanel.add(nextButton);
 
@@ -372,6 +379,7 @@ public class BattlePanel extends JPanel {
             attackButton.setEnabled(false);
             nextButton.setVisible(true);
             scrollBattleLogToBottom();
+            saveCurrentBattleLogToCampaignLog();
         }
     }
 
@@ -772,6 +780,7 @@ public class BattlePanel extends JPanel {
             nextButton.setVisible(true);
             nextButton.setText("Continue");
             scrollBattleLogToBottom();
+            saveCurrentBattleLogToCampaignLog();
         }
     }
 
@@ -960,5 +969,55 @@ public class BattlePanel extends JPanel {
         }
 
         return 1;
+    }
+
+    private void exportBattleLog() {
+        JFileChooser fileChooser = new JFileChooser();
+
+        fileChooser.setDialogTitle("Export Battle Log");
+
+        int result = fileChooser.showSaveDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+
+            File selectedFile = fileChooser.getSelectedFile();
+
+            String filePath = selectedFile.getAbsolutePath();
+
+            if (!filePath.endsWith(".txt")) {
+                filePath += ".txt";
+            }
+
+            try (PrintWriter writer = new PrintWriter(filePath)) {
+
+                String exportText = mainFrame.getCampaignBattleLog();
+
+                if (!currentBattleLogSaved) {
+                    exportText += battleLogArea.getText();
+                }
+
+                writer.print(exportText);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Battle log exported successfully."
+                );
+
+            } catch (Exception e) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Failed to export battle log.",
+                        "Export Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
+    }
+
+    private void saveCurrentBattleLogToCampaignLog() {
+        if (!currentBattleLogSaved) {
+            mainFrame.appendToCampaignBattleLog(battleLogArea.getText());
+            currentBattleLogSaved = true;
+        }
     }
 }

@@ -1,0 +1,114 @@
+Battle 1/5 started!
+Kaioshin encounters Goblin.
+
+Kaioshin uses Sneak Attack!
+Automatic Hit!
+Damage Roll: Main Hand 4 + DEX 5 + Off Hand 2 + Sneak Attack 3 = 14
+Goblin HP: 0/10
+Goblin has been defeated!
+Battle 2/5 started!
+Kaioshin encounters Skeleton.
+
+Kaioshin uses Sneak Attack!
+Automatic Hit!
+Damage Roll: Main Hand 3 + DEX 5 + Off Hand 2 + Sneak Attack 1 = 11
+Skeleton HP: 4/15
+
+Skeleton attacks Kaioshin.
+Attack Roll: 2 + 3 = 5
+Miss!
+
+Kaioshin attacks Skeleton.
+Attack Roll: 11 + 9 = 20
+Hit!
+Damage Roll: Main Hand 2 + DEX 5 + Off Hand 2 = 9
+Skeleton HP: 0/15
+Skeleton has been defeated!
+Battle 3/5 started!
+Kaioshin encounters Orc.
+
+Kaioshin uses Sneak Attack!
+Automatic Hit!
+Damage Roll: Main Hand 1 + DEX 5 + Off Hand 4 + Sneak Attack 6 = 16
+Orc HP: 6/22
+
+Orc attacks Kaioshin.
+Attack Roll: 6 + 3 = 9
+Miss!
+
+Kaioshin attacks Orc.
+Attack Roll: 9 + 9 = 18
+Hit!
+Damage Roll: Main Hand 2 + DEX 5 + Off Hand 3 = 10
+Orc HP: 0/22
+Orc has been defeated!
+Battle 4/5 started!
+Kaioshin encounters Hobgoblin.
+
+Kaioshin uses Sneak Attack!
+Automatic Hit!
+Damage Roll: Main Hand 4 + DEX 5 + Off Hand 2 + Sneak Attack 2 = 13
+Hobgoblin HP: 17/30
+
+Hobgoblin attacks Kaioshin.
+Attack Roll: 8 + 4 = 12
+Miss!
+
+Kaioshin attacks Hobgoblin.
+Attack Roll: 18 + 9 = 27
+Hit!
+Damage Roll: Main Hand 3 + DEX 5 + Off Hand 4 = 12
+Hobgoblin HP: 5/30
+
+Hobgoblin attacks Kaioshin.
+Attack Roll: 2 + 4 = 6
+Miss!
+
+Kaioshin attacks Hobgoblin.
+Attack Roll: 12 + 9 = 21
+Hit!
+Damage Roll: Main Hand 3 + DEX 5 + Off Hand 2 = 10
+Hobgoblin HP: 0/30
+Hobgoblin has been defeated!
+Battle 5/5 started!
+Kaioshin encounters Young Dragon.
+
+Kaioshin uses Sneak Attack!
+Automatic Hit!
+Damage Roll: Main Hand 4 + DEX 5 + Off Hand 1 + Sneak Attack 5 = 15
+Young Dragon HP: 25/40
+
+Young Dragon attacks Kaioshin.
+Attack Roll: 1 + 5 = 6
+Natural 1! Critical Miss!
+Young Dragon takes 3 self-damage.
+Young Dragon HP: 22/40
+
+Kaioshin attacks Young Dragon.
+Attack Roll: 7 + 9 = 16
+Hit!
+Damage Roll: Main Hand 2 + DEX 5 + Off Hand 1 = 8
+Young Dragon HP: 14/40
+
+Young Dragon attacks Kaioshin.
+Attack Roll: 7 + 5 = 12
+Miss!
+
+Kaioshin attacks Young Dragon.
+Attack Roll: 16 + 9 = 25
+Hit!
+Damage Roll: Main Hand 4 + DEX 5 + Off Hand 1 = 10
+Young Dragon HP: 4/40
+
+Young Dragon attacks Kaioshin.
+Attack Roll: 17 + 5 = 22
+Hit!
+Damage Roll: 2 + 4 = 6
+Kaioshin HP: 22/28
+
+Kaioshin attacks Young Dragon.
+Attack Roll: 18 + 9 = 27
+Hit!
+Damage Roll: Main Hand 4 + DEX 5 + Off Hand 2 = 11
+Young Dragon HP: 0/40
+Young Dragon has been defeated!

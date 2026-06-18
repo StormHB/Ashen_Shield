@@ -14,6 +14,8 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private Container contentPane;
 
+    private StringBuilder campaignBattleLog = new StringBuilder();
+
     public MainFrame() {
         super("Ashen Shield");
 
@@ -56,6 +58,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showBattle(GameCharacter character) {
+        clearCampaignBattleLog();
         showBattle(character, 0);
     }
 
@@ -96,5 +99,17 @@ public class MainFrame extends JFrame {
         setContentPane(new VictoryPanel(this, character, defeatedEnemyIndex, defeatedEnemyName));
         revalidate();
         repaint();
+    }
+
+    public void appendToCampaignBattleLog(String text) {
+        campaignBattleLog.append(text);
+    }
+
+    public String getCampaignBattleLog() {
+        return campaignBattleLog.toString();
+    }
+
+    public void clearCampaignBattleLog() {
+        campaignBattleLog.setLength(0);
     }
 }
