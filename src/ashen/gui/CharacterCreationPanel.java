@@ -106,7 +106,7 @@ public class CharacterCreationPanel extends JPanel {
         JPanel formPanel = new JPanel(new GridBagLayout());
 
         nameField = new JTextField(15);
-        raceBox = new JComboBox<>(new String[]{"Human", "Elf", "Dwarf", "Half-Orc", "Dragonborn"});
+        raceBox = new JComboBox<>(new String[]{"Human", "Elf", "Dwarf", "Tiefling", "Dragonborn"});
         raceBonusLabel = new JLabel();
         raceBonusLabel.setFont(new Font("SansSerif", Font.ITALIC, 12));
         classBox = new JComboBox<>(new String[]{"Fighter", "Rogue", "Wizard", "Druid", "Ranger"});
@@ -385,25 +385,29 @@ public class CharacterCreationPanel extends JPanel {
 
         if ("Human".equals(selectedRace)) {
             strengthRaceBonus = 1;
+            dexterityRaceBonus = 1;
             constitutionRaceBonus = 1;
             luckRaceBonus = 1;
-            raceBonusLabel.setText("Race Bonus: +1 STR, +1 CON, +1 LCK");
+            raceBonusLabel.setText("Race Bonus: +1 STR, +1 DEX, +1 CON, +1 LCK");
         } else if ("Elf".equals(selectedRace)) {
             dexterityRaceBonus = 2;
-            intelligenceRaceBonus = 1;
-            raceBonusLabel.setText("Race Bonus: +2 DEX, +1 INT");
-        } else if ("Dwarf".equals(selectedRace)) {
-            constitutionRaceBonus = 2;
-            wisdomRaceBonus = 1;
-            raceBonusLabel.setText("Race Bonus: +2 CON, +1 WIS");
-        } else if ("Half-Orc".equals(selectedRace)) {
-            strengthRaceBonus = 2;
             constitutionRaceBonus = 1;
-            raceBonusLabel.setText("Race Bonus: +2 STR, +1 CON");
+            luckRaceBonus = 1;
+            raceBonusLabel.setText("Race Bonus: +2 DEX, +1 CON, +1 LCK");
+        } else if ("Dwarf".equals(selectedRace)) {
+            strengthRaceBonus = 1;
+            constitutionRaceBonus = 1;
+            wisdomRaceBonus = 2;
+            raceBonusLabel.setText("Race Bonus: +1 STR, +1 CON, +2 WIS");
+        } else if ("Tiefling".equals(selectedRace)) {
+            intelligenceRaceBonus = 2;
+            luckRaceBonus = 2;
+            raceBonusLabel.setText("Race Bonus: +2 INT, +2 LCK");
         } else if ("Dragonborn".equals(selectedRace)) {
             strengthRaceBonus = 2;
+            constitutionRaceBonus = 1;
             luckRaceBonus = 1;
-            raceBonusLabel.setText("Race Bonus: +2 STR, +1 LCK");
+            raceBonusLabel.setText("Race Bonus: +2 STR, +1 CON, +1 LCK");
         }
 
         updateStatLabels();
@@ -445,19 +449,19 @@ public class CharacterCreationPanel extends JPanel {
         armorBox.removeAllItems();
 
         if ("Fighter".equals(selectedClass)) {
-            addWeapons("Longsword");
+            addWeapons("Longsword + Shield", "Greatsword");
             addArmor("Chain Mail", "Plate Armor");
         } else if ("Rogue".equals(selectedClass)) {
-            addWeapons("Dagger", "Scimitar", "Shortbow");
+            addWeapons("Scimitar + Dagger", "Dual Daggers");
             addArmor("Leather Armor");
         } else if ("Wizard".equals(selectedClass)) {
-            addWeapons("Quarterstaff");
+            addWeapons("Rod + Spellbook");
             addArmor("Cloth Robe");
         } else if ("Druid".equals(selectedClass)) {
-            addWeapons("Quarterstaff", "Scimitar");
+            addWeapons("Quarterstaff");
             addArmor("Leather Armor", "Hide Armor");
         } else if ("Ranger".equals(selectedClass)) {
-            addWeapons("Longbow", "Shortbow", "Dagger");
+            addWeapons("Longbow");
             addArmor("Leather Armor", "Hide Armor");
         }
 
@@ -515,14 +519,25 @@ public class CharacterCreationPanel extends JPanel {
             return;
         }
 
+        int intelligence = Integer.parseInt(
+                intelligenceValueLabel.getText()
+        );
+
+        if ("Wizard".equals(classBox.getSelectedItem())) {
+            intelligence += 2;
+        }
+
         Stats stats = new Stats(
                 Integer.parseInt(strengthValueLabel.getText()),
                 Integer.parseInt(dexterityValueLabel.getText()),
                 Integer.parseInt(constitutionValueLabel.getText()),
-                Integer.parseInt(intelligenceValueLabel.getText()),
+                intelligence,
                 Integer.parseInt(wisdomValueLabel.getText()),
                 Integer.parseInt(luckValueLabel.getText())
         );
+
+        boolean hasShield =
+                "Longsword + Shield".equals(weaponBox.getSelectedItem());
 
         GameCharacter character = new GameCharacter(
                 name,
@@ -531,7 +546,7 @@ public class CharacterCreationPanel extends JPanel {
                 stats,
                 (String) weaponBox.getSelectedItem(),
                 (String) armorBox.getSelectedItem(),
-                shieldCheckBox.isSelected()
+                hasShield
         );
 
         mainFrame.showBattle(character);
@@ -558,8 +573,8 @@ public class CharacterCreationPanel extends JPanel {
             classDescriptionArea.setText(
                     "Primary Stat: Intelligence\n" +
                             "Recommended Stats: INT, CON\n\n" +
-                            "Class Ability: Arcane Missile\n" +
-                            "Effect: First attack each battle automatically hits."
+                            "Class Ability: True Sight\n" +
+                            "Effect: Gain +2 attack bonus with spells."
             );
         } else if ("Druid".equals(selectedClass)) {
             classDescriptionArea.setText(
@@ -582,17 +597,19 @@ public class CharacterCreationPanel extends JPanel {
         String selectedWeapon = (String) weaponBox.getSelectedItem();
 
         if ("Longsword".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d8 | One-handed | Fighter weapon");
+            weaponBox.setToolTipText("Damage: 1d8 | One-handed | STR weapon");
         } else if ("Dagger".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d4 | One-handed | DEX weapon");
+            weaponBox.setToolTipText("Damage: 1d4 | +1 Attack Bonus | DEX weapon");
         } else if ("Scimitar".equals(selectedWeapon)) {
             weaponBox.setToolTipText("Damage: 1d6 | One-handed | DEX weapon");
         } else if ("Quarterstaff".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d6 | Two-handed | Caster weapon");
+            weaponBox.setToolTipText("Damage: 1d8 | Two-handed | WIS weapon");
         } else if ("Shortbow".equals(selectedWeapon)) {
             weaponBox.setToolTipText("Damage: 1d6 | Two-handed | DEX weapon");
         } else if ("Longbow".equals(selectedWeapon)) {
-            weaponBox.setToolTipText("Damage: 1d8 | Two-handed | DEX weapon");
+            weaponBox.setToolTipText("Damage: 1d10 | Two-handed | DEX weapon");
+        } else if ("Rod".equals(selectedWeapon)) {
+            weaponBox.setToolTipText("Damage: 1d10 | Spellcasting focus | INT weapon");
         } else {
             weaponBox.setToolTipText(null);
         }

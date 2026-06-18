@@ -14,9 +14,10 @@ public class BattlePanel extends JPanel {
     private GameCharacter character;
     private Enemy enemy;
 
-    private boolean wizardPassiveUsed;
+    private String lastDamageFormula;
+    private String lastDamageDescription;
     private boolean rogueSneakAttackUsed;
-    private boolean rangerAmbushUsed;
+    private int rangerPoisonDamage;
 
     private int currentEnemyIndex = 0;
     private Enemy[] enemies;
@@ -104,13 +105,6 @@ public class BattlePanel extends JPanel {
 
         battleLogArea.append("Battle " + (currentEnemyIndex + 1) + "/" + enemies.length + " started!\n");
         battleLogArea.append(character.getName() + " encounters " + enemy.getName() + ".\n\n");
-
-        if ("Ranger".equals(character.getCharacterClass()) && !rangerAmbushUsed) {
-            rangerAmbushUsed = true;
-            battleLogArea.append(character.getName() + " uses Ambush and attacks from distance!\n");
-
-            SwingUtilities.invokeLater(() -> playerAttack(false));
-        }
     }
 
     private JPanel createPlayerPanel() {
@@ -156,6 +150,13 @@ public class BattlePanel extends JPanel {
 
     private void handleAttack() {
         playerAttack(true);
+        scrollBattleLogToBottom();
+    }
+
+    private void scrollBattleLogToBottom() {
+        battleLogArea.setCaretPosition(
+                battleLogArea.getDocument().getLength()
+        );
     }
 
     private void playerAttack(boolean enemyResponds) {
@@ -163,12 +164,10 @@ public class BattlePanel extends JPanel {
         if ("Rogue".equals(character.getCharacterClass()) && !rogueSneakAttackUsed) {
             rogueSneakAttackUsed = true;
 
-            int weaponDice = getWeaponDamageDice();
-            int damageRoll = rollDice(weaponDice);
+            int baseDamage = calculatePlayerDamage();
             int sneakRoll = rollDice(8);
-            int damageModifier = calculateAbilityModifierForAttack();
 
-            int damage = damageRoll + sneakRoll + damageModifier;
+            int damage = baseDamage + sneakRoll;
 
             if (damage < 1) {
                 damage = 1;
@@ -181,47 +180,14 @@ public class BattlePanel extends JPanel {
             battleLogArea.append("Automatic Hit!\n");
             battleLogArea.append(
                     "Damage Roll: "
-                            + damageRoll
+                            + lastDamageFormula
                             + " + Sneak Attack "
                             + sneakRoll
-                            + " + "
-                            + damageModifier
                             + " = "
                             + damage
                             + "\n"
             );
-            battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
-            checkEnemyDefeated();
-
-            if (!enemy.isDefeated() && enemyResponds) {
-                battleLogArea.append("\n");
-                enemyTurn();
-            } else {
-                battleLogArea.append("\n");
-            }
-
-            return;
-        }
-
-        if ("Wizard".equals(character.getCharacterClass()) && !wizardPassiveUsed) {
-            wizardPassiveUsed = true;
-
-            int weaponDice = getWeaponDamageDice();
-            int damageRoll = rollDice(weaponDice);
-            int damageModifier = calculateAbilityModifierForAttack();
-            int damage = damageRoll + damageModifier;
-
-            if (damage < 1) {
-                damage = 1;
-            }
-
-            enemy.takeDamage(damage);
-            updateEnemyHpLabel();
-
-            battleLogArea.append(character.getName() + " casts Arcane Missile!\n");
-            battleLogArea.append("Automatic Hit!\n");
-            battleLogArea.append("Damage Roll: " + damageRoll + " + " + damageModifier + " = " + damage + "\n");
             battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
             checkEnemyDefeated();
@@ -237,10 +203,28 @@ public class BattlePanel extends JPanel {
         }
 
         int d20Roll = rollDice(20);
+
+        if ("Wizard".equals(character.getCharacterClass()) && d20Roll <= 5) {
+            int oldRoll = d20Roll;
+            d20Roll = rollDice(20);
+
+            battleLogArea.append(
+                    "Arcane Precision: rerolled "
+                            + oldRoll
+                            + " into "
+                            + d20Roll
+                            + ".\n"
+            );
+        }
+
         int attackBonus = calculateAttackBonus();
         int totalAttack = d20Roll + attackBonus;
 
-        battleLogArea.append(character.getName() + " attacks " + enemy.getName() + ".\n");
+        if ("Wizard".equals(character.getCharacterClass())) {
+            battleLogArea.append(character.getName() + " casts Fireball at " + enemy.getName() + ".\n");
+        } else {
+            battleLogArea.append(character.getName() + " attacks " + enemy.getName() + ".\n");
+        }
 
         if (d20Roll == 1) {
             int selfDamage = rollDice(4);
@@ -275,11 +259,28 @@ public class BattlePanel extends JPanel {
             enemy.takeDamage(damage);
             updateEnemyHpLabel();
 
+            if ("Ranger".equals(character.getCharacterClass())) {
+                int poisonRoll = rollDice(2);
+                rangerPoisonDamage += poisonRoll;
+
+                battleLogArea.append(
+                        "Poison Arrow: +"
+                                + poisonRoll
+                                + " poison damage. Total poison: "
+                                + rangerPoisonDamage
+                                + "\n"
+                );
+            }
+
             battleLogArea.append("Natural 20! Critical Hit!\n");
             battleLogArea.append("Critical Damage Roll: " + firstRoll + " + " + secondRoll + " + " + damageModifier + " = " + damage + "\n");
             battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
             checkEnemyDefeated();
+
+            if (!enemy.isDefeated()) {
+                applyRangerPoison();
+            }
 
             if (!enemy.isDefeated() && enemyResponds) {
                 battleLogArea.append("\n");
@@ -294,27 +295,38 @@ public class BattlePanel extends JPanel {
         battleLogArea.append("Attack Roll: " + d20Roll + " + " + attackBonus + " = " + totalAttack + "\n");
 
         if (totalAttack >= enemy.getArmorClass()) {
-            int weaponDice = getWeaponDamageDice();
-            int damageRoll = rollDice(weaponDice);
-            int damageModifier = calculateAbilityModifierForAttack();
-
-            int damage = damageRoll + damageModifier;
+            int damage = calculatePlayerDamage();
 
             if (damage < 1) {
                 damage = 1;
             }
 
             battleLogArea.append("Hit!\n");
-            battleLogArea.append("Damage Roll: " + damageRoll + " + " + damageModifier);
-
-            battleLogArea.append(" = " + damage + "\n");
+            battleLogArea.append("Damage Roll: " + lastDamageDescription + "\n");
 
             enemy.takeDamage(damage);
             updateEnemyHpLabel();
 
+            if ("Ranger".equals(character.getCharacterClass())) {
+                int poisonRoll = rollDice(2);
+                rangerPoisonDamage += poisonRoll;
+
+                battleLogArea.append(
+                        "Poison Arrow: +"
+                                + poisonRoll
+                                + " poison damage. Total poison: "
+                                + rangerPoisonDamage
+                                + "\n"
+                );
+            }
+
             battleLogArea.append(enemy.getName() + " HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n");
 
             checkEnemyDefeated();
+
+            if (!enemy.isDefeated()) {
+                applyRangerPoison();
+            }
 
             if (!enemy.isDefeated() && enemyResponds) {
                 battleLogArea.append("\n");
@@ -323,10 +335,15 @@ public class BattlePanel extends JPanel {
                 battleLogArea.append("\n");
             }
         } else {
-            battleLogArea.append("Miss!\n\n");
+            battleLogArea.append("Miss!\n");
 
-            if (enemyResponds) {
+            applyRangerPoison();
+
+            if (!enemy.isDefeated() && enemyResponds) {
+                battleLogArea.append("\n");
                 enemyTurn();
+            } else {
+                battleLogArea.append("\n");
             }
         }
     }
@@ -375,7 +392,163 @@ public class BattlePanel extends JPanel {
 
     private int calculateAttackBonus() {
         int proficiencyBonus = 2;
-        return proficiencyBonus + calculateAbilityModifierForAttack();
+        int attackBonus = proficiencyBonus + calculateAbilityModifierForAttack();
+
+        if ("Dual Daggers".equals(character.getWeapon())) {
+            attackBonus += 2;
+        }
+
+        return attackBonus;
+    }
+
+    private int calculatePlayerDamage() {
+
+        int modifier = calculateAbilityModifierForAttack();
+        String statName = getMainStatName();
+
+        switch (character.getWeapon()) {
+            case "Scimitar + Dagger": {
+                int mainHandRoll = rollDice(6);
+                int offHandRoll = rollDice(4);
+
+                int damage = mainHandRoll + modifier + offHandRoll;
+
+                lastDamageFormula =
+                        "Main Hand "
+                                + mainHandRoll
+                                + " + "
+                                + statName
+                                + " "
+                                + modifier
+                                + " + Off Hand "
+                                + offHandRoll;
+
+                lastDamageDescription =
+                        lastDamageFormula
+                                + " = "
+                                + damage;
+
+                return damage;
+            }
+
+            case "Dual Daggers": {
+                int mainHandRoll = rollDice(4);
+                int offHandRoll = rollDice(4);
+
+                int damage = mainHandRoll + modifier + offHandRoll;
+
+                lastDamageFormula =
+                        "Main Hand "
+                                + mainHandRoll
+                                + " + "
+                                + statName
+                                + " "
+                                + modifier
+                                + " + Off Hand "
+                                + offHandRoll;
+
+                lastDamageDescription =
+                        lastDamageFormula
+                                + " = "
+                                + damage;
+
+                return damage;
+            }
+
+            case "Rod + Spellbook": {
+                int spellRoll = rollDice(getWeaponDamageDice());
+
+                int damage = spellRoll + modifier;
+
+                lastDamageFormula =
+                        "Fireball "
+                                + spellRoll
+                                + " + "
+                                + statName
+                                + " "
+                                + modifier;
+
+                lastDamageDescription =
+                        lastDamageFormula
+                                + " = "
+                                + damage;
+
+                return damage;
+            }
+
+            default: {
+                int weaponRoll = rollDice(getWeaponDamageDice());
+
+                int damage = weaponRoll + modifier;
+
+                lastDamageFormula =
+                        "Weapon "
+                                + weaponRoll
+                                + " + "
+                                + statName
+                                + " "
+                                + modifier;
+
+                lastDamageDescription =
+                        lastDamageFormula
+                                + " = "
+                                + damage;
+
+                return damage;
+            }
+        }
+    }
+
+    private String getMainStatName() {
+
+        switch (character.getCharacterClass()) {
+            case "Fighter":
+                return "STR";
+
+            case "Rogue":
+            case "Ranger":
+                return "DEX";
+
+            case "Wizard":
+                return "INT";
+
+            case "Druid":
+                return "WIS";
+
+            default:
+                return "Modifier";
+        }
+    }
+
+    private void applyRangerPoison() {
+
+        if (!"Ranger".equals(character.getCharacterClass())) {
+            return;
+        }
+
+        if (rangerPoisonDamage <= 0) {
+            return;
+        }
+
+        enemy.takeDamage(rangerPoisonDamage);
+        updateEnemyHpLabel();
+
+        battleLogArea.append(
+                "Poison Arrows deal "
+                        + rangerPoisonDamage
+                        + " poison damage.\n"
+        );
+
+        battleLogArea.append(
+                enemy.getName()
+                        + " HP: "
+                        + enemy.getCurrentHp()
+                        + "/"
+                        + enemy.getMaxHp()
+                        + "\n"
+        );
+
+        checkEnemyDefeated();
     }
 
     private int calculateAC() {
@@ -406,10 +579,6 @@ public class BattlePanel extends JPanel {
             ac += 2;
         }
 
-        if ("Druid".equals(character.getCharacterClass())
-                && "Quarterstaff".equals(character.getWeapon())) {
-            ac += 1;
-        }
         if ("Druid".equals(character.getCharacterClass())) {
             ac += 2;
         }
@@ -423,16 +592,20 @@ public class BattlePanel extends JPanel {
 
     private int getWeaponDamageDice() {
         switch (character.getWeapon()) {
-            case "Longsword":
+            case "Longsword + Shield":
                 return 8;
-            case "Dagger":
-                return 4;
-            case "Scimitar":
-            case "Quarterstaff":
-            case "Shortbow":
+            case "Greatsword":
+                return 12;
+            case "Scimitar + Dagger":
                 return 6;
+            case "Dual Daggers":
+                return 4;
+            case "Rod + Spellbook":
+                return 12;
+            case "Quarterstaff":
+                return 10;
             case "Longbow":
-                return 8;
+                return 10;
             default:
                 return 4;
         }
@@ -577,16 +750,48 @@ public class BattlePanel extends JPanel {
     }
 
     private void saveCharacter() {
+        String filePath = "DATA/" + character.getName() + ".ser";
+        saveCharacterToFile(filePath);
+    }
+
+    private void saveCharacterAs() {
+        JFileChooser fileChooser = new JFileChooser(new File("DATA"));
+        fileChooser.setDialogTitle("Save Character As");
+        fileChooser.setSelectedFile(new File(character.getName() + ".ser"));
+
+        int result = fileChooser.showSaveDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getAbsolutePath();
+
+            if (!filePath.endsWith(".ser")) {
+                filePath += ".ser";
+            }
+
+            saveCharacterToFile(filePath);
+        }
+    }
+
+    private void saveCharacterToFile(String filePath) {
+        File saveFile = new File(filePath);
+
+        if (saveFile.exists()) {
+            int choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "A save file with this name already exists.\nDo you want to overwrite it?",
+                    "Overwrite Save",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
 
         try {
-
-            String filePath =
-                    "DATA/" + character.getName() + ".ser";
-
-            saveLoadService.saveCharacter(
-                    character,
-                    filePath
-            );
+            saveLoadService.saveCharacter(character, filePath);
 
             JOptionPane.showMessageDialog(
                     this,
@@ -594,53 +799,12 @@ public class BattlePanel extends JPanel {
             );
 
         } catch (Exception e) {
-
             JOptionPane.showMessageDialog(
                     this,
-                    "Failed to save character."
+                    "Failed to save character.",
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE
             );
-        }
-    }
-
-    private void saveCharacterAs() {
-
-        JFileChooser fileChooser = new JFileChooser(new File("DATA"));
-
-        fileChooser.setDialogTitle("Save Character");
-
-        int result = fileChooser.showSaveDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-
-            File selectedFile = fileChooser.getSelectedFile();
-
-            String filePath = selectedFile.getAbsolutePath();
-
-            if (!filePath.endsWith(".ser")) {
-                filePath += ".ser";
-            }
-
-            try {
-
-                saveLoadService.saveCharacter(
-                        character,
-                        filePath
-                );
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Character saved successfully."
-                );
-
-            } catch (Exception e) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Failed to save character.",
-                        "Save Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
         }
     }
 
@@ -712,17 +876,26 @@ public class BattlePanel extends JPanel {
     private String getWeaponDamageDescription() {
 
         switch (character.getWeapon()) {
-            case "Dagger":
-                return "1d4";
+            case "Longsword + Shield":
+                return "1d8 + STR, +2 AC";
 
-            case "Scimitar":
+            case "Greatsword":
+                return "1d12 + STR";
+
+            case "Dual Daggers":
+                return "1d4 + DEX + 1d4, +2 Attack Bonus";
+
+            case "Scimitar + Dagger":
+                return "1d6 + DEX + 1d4";
+
+            case "Rod + Spellbook":
+                return "Fireball 1d12 + INT, +2 INT";
+
             case "Quarterstaff":
-            case "Shortbow":
-                return "1d6";
+                return "1d10 + WIS";
 
-            case "Longsword":
             case "Longbow":
-                return "1d8";
+                return "1d10 + DEX";
 
             default:
                 return "?";
