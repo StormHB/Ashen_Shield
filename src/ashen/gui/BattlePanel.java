@@ -13,6 +13,7 @@ public class BattlePanel extends JPanel {
 
     private GameCharacter character;
     private Enemy enemy;
+    private boolean playerDefeated;
 
     private String lastDamageFormula;
     private String lastDamageDescription;
@@ -29,6 +30,7 @@ public class BattlePanel extends JPanel {
 
     private JTextArea battleLogArea;
     private JButton attackButton;
+    private JButton nextButton;
 
     private SaveLoadService saveLoadService;
 
@@ -84,6 +86,17 @@ public class BattlePanel extends JPanel {
         attackButton.addActionListener(e -> handleAttack());
         attackButton.setPreferredSize(new Dimension(120, 40));
 
+        nextButton = new JButton("Next");
+        nextButton.setPreferredSize(new Dimension(120, 40));
+        nextButton.setVisible(false);
+        nextButton.addActionListener(e -> {
+            if (playerDefeated) {
+                mainFrame.showDefeatPanel(character);
+            } else {
+                mainFrame.showVictoryPanel(character, currentEnemyIndex, enemy.getName());
+            }
+        });
+
         JButton saveButton = new JButton("Save");
         saveButton.setPreferredSize(new Dimension(120, 40));
         saveButton.addActionListener(e -> saveCharacter());
@@ -100,6 +113,7 @@ public class BattlePanel extends JPanel {
         actionPanel.add(saveButton);
         actionPanel.add(saveAsButton);
         actionPanel.add(characterSheetButton);
+        actionPanel.add(nextButton);
 
         add(actionPanel, BorderLayout.SOUTH);
 
@@ -356,7 +370,8 @@ public class BattlePanel extends JPanel {
         if (enemy.isDefeated()) {
             battleLogArea.append(enemy.getName() + " has been defeated!\n");
             attackButton.setEnabled(false);
-            mainFrame.showVictoryPanel(character, currentEnemyIndex, enemy.getName());
+            nextButton.setVisible(true);
+            scrollBattleLogToBottom();
         }
     }
 
@@ -752,9 +767,11 @@ public class BattlePanel extends JPanel {
                             + " has been defeated!\n"
             );
 
+            playerDefeated = true;
             attackButton.setEnabled(false);
-
-            mainFrame.showDefeatPanel(character);
+            nextButton.setVisible(true);
+            nextButton.setText("Continue");
+            scrollBattleLogToBottom();
         }
     }
 
