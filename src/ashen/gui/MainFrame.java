@@ -3,11 +3,9 @@ package ashen.gui;
 import ashen.model.GameCharacter;
 import ashen.service.SaveLoadService;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import java.io.File;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class MainFrame extends JFrame {
 

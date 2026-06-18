@@ -14,6 +14,10 @@ public class CharacterCreationPanel extends JPanel {
     private JTextArea classDescriptionArea;
     private JComboBox<String> weaponBox;
     private JComboBox<String> armorBox;
+    private JRadioButton normalDifficultyButton;
+    private JRadioButton hardDifficultyButton;
+    private JCheckBox hardcoreHpCheckBox;
+    private JCheckBox hardcoreDamageCheckBox;
 
     private JLabel pointsRemainingLabel;
     private int pointsRemaining = 12;
@@ -51,8 +55,6 @@ public class CharacterCreationPanel extends JPanel {
     private final Color defaultStatColor = Color.BLACK;
     private final Color lightBonusColor = new Color(180, 140, 0);
     private final Color strongBonusColor = new Color(0, 180, 0);
-
-    private JCheckBox shieldCheckBox;
 
     public CharacterCreationPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -111,6 +113,23 @@ public class CharacterCreationPanel extends JPanel {
         raceBonusLabel.setFont(new Font("SansSerif", Font.ITALIC, 12));
         classBox = new JComboBox<>(new String[]{"Fighter", "Rogue", "Wizard", "Druid", "Ranger"});
 
+        normalDifficultyButton = new JRadioButton("Normal", true);
+        hardDifficultyButton = new JRadioButton("Hardcore");
+
+        ButtonGroup difficultyGroup = new ButtonGroup();
+
+        difficultyGroup.add(normalDifficultyButton);
+        difficultyGroup.add(hardDifficultyButton);
+
+        hardcoreHpCheckBox = new JCheckBox("+25% enemy HP");
+        hardcoreDamageCheckBox = new JCheckBox("+25% enemy damage");
+
+        hardcoreHpCheckBox.setEnabled(false);
+        hardcoreDamageCheckBox.setEnabled(false);
+
+        normalDifficultyButton.addActionListener(e -> updateHardcoreOptions());
+        hardDifficultyButton.addActionListener(e -> updateHardcoreOptions());
+
         classDescriptionArea = new JTextArea(8, 24);
         classDescriptionArea.setEditable(false);
         classDescriptionArea.setLineWrap(true);
@@ -125,12 +144,10 @@ public class CharacterCreationPanel extends JPanel {
 
         weaponBox = new JComboBox<>();
         weaponBox.addActionListener(e -> {
-            updateShieldAvailability();
             updateWeaponTooltip();
         });
         armorBox = new JComboBox<>();
         armorBox.addActionListener(e -> updateArmorTooltip());
-        shieldCheckBox = new JCheckBox("Use Shield");
 
         raceBox.addActionListener(e -> applyRaceBonuses());
 
@@ -156,7 +173,19 @@ public class CharacterCreationPanel extends JPanel {
 
         addFormRow(formPanel, gbc, 5, "Weapon:", weaponBox);
         addFormRow(formPanel, gbc, 6, "Armor:", armorBox);
-        addFormRow(formPanel, gbc, 7, "Shield:", shieldCheckBox);
+
+        JPanel difficultyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        difficultyPanel.add(normalDifficultyButton);
+        difficultyPanel.add(hardDifficultyButton);
+
+        addFormRow(formPanel, gbc, 7, "Difficulty:", difficultyPanel);
+
+        JPanel hardcoreOptionsPanel =
+                new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        hardcoreOptionsPanel.add(hardcoreHpCheckBox);
+        hardcoreOptionsPanel.add(hardcoreDamageCheckBox);
+
+        addFormRow(formPanel, gbc, 8, "Hardcore Options:", hardcoreOptionsPanel);
 
         updateClassEquipment();
         updateClassDescription();
@@ -467,7 +496,6 @@ public class CharacterCreationPanel extends JPanel {
 
         updateWeaponTooltip();
         updateArmorTooltip();
-        updateShieldAvailability();
     }
 
     private void addWeapons(String... weapons) {
@@ -480,16 +508,6 @@ public class CharacterCreationPanel extends JPanel {
         for (String armor : armorList) {
             armorBox.addItem(armor);
         }
-    }
-
-    private void updateShieldAvailability() {
-        String selectedWeapon = (String) weaponBox.getSelectedItem();
-
-        boolean shieldWeapon =
-                "Longsword + Shield".equals(selectedWeapon);
-
-        shieldCheckBox.setEnabled(false);
-        shieldCheckBox.setSelected(shieldWeapon);
     }
 
     private void createCharacter() {
@@ -512,6 +530,20 @@ public class CharacterCreationPanel extends JPanel {
                     "Invalid Character",
                     JOptionPane.WARNING_MESSAGE
             );
+            return;
+        }
+
+        if (hardDifficultyButton.isSelected()
+                && !hardcoreHpCheckBox.isSelected()
+                && !hardcoreDamageCheckBox.isSelected()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Hardcore mode requires at least one hardcore option.",
+                    "Invalid Difficulty",
+                    JOptionPane.WARNING_MESSAGE
+            );
+
             return;
         }
 
@@ -556,8 +588,18 @@ public class CharacterCreationPanel extends JPanel {
                 luck
         );
 
-        boolean hasShield =
-                "Longsword + Shield".equals(weaponBox.getSelectedItem());
+        String difficulty =
+                hardDifficultyButton.isSelected()
+                        ? "Hardcore"
+                        : "Normal";
+
+        boolean hardcoreHpBonus =
+                hardDifficultyButton.isSelected()
+                        && hardcoreHpCheckBox.isSelected();
+
+        boolean hardcoreDamageBonus =
+                hardDifficultyButton.isSelected()
+                        && hardcoreDamageCheckBox.isSelected();
 
         GameCharacter character = new GameCharacter(
                 name,
@@ -566,7 +608,9 @@ public class CharacterCreationPanel extends JPanel {
                 stats,
                 (String) weaponBox.getSelectedItem(),
                 (String) armorBox.getSelectedItem(),
-                hasShield
+                difficulty,
+                hardcoreHpBonus,
+                hardcoreDamageBonus
         );
 
         mainFrame.showBattle(character);
@@ -579,8 +623,8 @@ public class CharacterCreationPanel extends JPanel {
             classDescriptionArea.setText(
                     "Primary Stat: Strength\n" +
                             "Recommended Stats: STR, CON\n\n" +
-                            "Class Ability: Shield Training\n" +
-                            "Effect: Can use heavy armor and shields."
+                            "Class Ability: Weapon Mastery\n" +
+                            "Effect: Can choose between defensive and offensive weapon setups."
             );
         } else if ("Rogue".equals(selectedClass)) {
             classDescriptionArea.setText(
@@ -654,6 +698,18 @@ public class CharacterCreationPanel extends JPanel {
             armorBox.setToolTipText("AC: 17");
         } else {
             armorBox.setToolTipText(null);
+        }
+    }
+
+    private void updateHardcoreOptions() {
+        boolean hardcore = hardDifficultyButton.isSelected();
+
+        hardcoreHpCheckBox.setEnabled(hardcore);
+        hardcoreDamageCheckBox.setEnabled(hardcore);
+
+        if (!hardcore) {
+            hardcoreHpCheckBox.setSelected(false);
+            hardcoreDamageCheckBox.setSelected(false);
         }
     }
 }

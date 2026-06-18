@@ -101,26 +101,6 @@ public class BattlePanel extends JPanel {
             }
         });
 
-        JButton saveButton = new JButton("Save");
-        saveButton.setPreferredSize(new Dimension(120, 40));
-        saveButton.addActionListener(e -> saveCharacter());
-
-        JButton saveAsButton = new JButton("Save As");
-        saveAsButton.setPreferredSize(new Dimension(120, 40));
-        saveAsButton.addActionListener(e -> saveCharacterAs());
-
-        JButton exportLogButton = new JButton("Export Log");
-        exportLogButton.setPreferredSize(new Dimension(130, 40));
-        exportLogButton.addActionListener(e -> exportBattleLog());
-
-        JButton characterSheetButton = new JButton("Character Sheet");
-        characterSheetButton.setPreferredSize(new Dimension(160, 40));
-        characterSheetButton.addActionListener(e -> showCharacterSheet());
-
-        JButton enemySheetButton = new JButton("Enemy Sheet");
-        enemySheetButton.setPreferredSize(new Dimension(140, 40));
-        enemySheetButton.addActionListener(e -> showEnemySheet());
-
         actionPanel.add(attackButton);
         actionPanel.add(nextButton);
 
@@ -150,7 +130,6 @@ public class BattlePanel extends JPanel {
         panel.add(new JLabel("Attack Bonus: " + formatModifier(calculateAttackBonus())));
         panel.add(new JLabel("Weapon: " + character.getWeapon()));
         panel.add(new JLabel("Armor: " + character.getArmor()));
-        panel.add(new JLabel("Shield: " + (character.hasShield() ? "Yes" : "No")));
 
         return panel;
     }
@@ -391,10 +370,6 @@ public class BattlePanel extends JPanel {
         return Math.floorDiv(statValue - 10, 2);
     }
 
-    private int calculateHP() {
-        return 10 + character.getStats().getConstitution();
-    }
-
     private int calculateAbilityModifierForAttack() {
         String characterClass = character.getCharacterClass();
 
@@ -579,7 +554,6 @@ public class BattlePanel extends JPanel {
     }
 
     private int calculateAC() {
-        int dexModifier = calculateModifier(character.getStats().getDexterity());
         int ac;
 
         switch (character.getArmor()) {
@@ -609,10 +583,6 @@ public class BattlePanel extends JPanel {
 
             default:
                 ac = 10;
-        }
-
-        if (character.hasShield()) {
-            ac += 2;
         }
 
         if ("Druid".equals(character.getCharacterClass())) {
@@ -645,35 +615,6 @@ public class BattlePanel extends JPanel {
             default:
                 return 4;
         }
-    }
-
-    private int calculateDamage() {
-        int damageRoll = rollDice(getWeaponDamageDice());
-        int damageModifier = calculateAbilityModifierForAttack();
-
-        int damage = damageRoll + damageModifier;
-
-        if (damage < 1) {
-            damage = 1;
-        }
-
-        return damage;
-    }
-
-    private int calculateCriticalDamage() {
-        int weaponDice = getWeaponDamageDice();
-
-        int firstRoll = rollDice(weaponDice);
-        int secondRoll = rollDice(weaponDice);
-        int damageModifier = calculateAbilityModifierForAttack();
-
-        int damage = firstRoll + secondRoll + damageModifier;
-
-        if (damage < 1) {
-            damage = 1;
-        }
-
-        return damage;
     }
 
     private String formatModifier(int modifier) {
@@ -713,7 +654,7 @@ public class BattlePanel extends JPanel {
             int secondRoll = rollDice(6);
             int damageModifier = enemy.getAttackBonus();
             int damage = firstRoll + secondRoll + damageModifier;
-
+            damage = applyDifficultyDamage(damage);
             damagePlayer(damage);
 
             battleLogArea.append("Natural 20! Critical Hit!\n");
@@ -739,6 +680,7 @@ public class BattlePanel extends JPanel {
             int damageRoll = rollDice(6);
             int damageModifier = calculateEnemyDamageModifier();
             int damage = damageRoll + damageModifier;
+            damage = applyDifficultyDamage(damage);
 
             damagePlayer(damage);
 
@@ -858,7 +800,8 @@ public class BattlePanel extends JPanel {
                         "Name: " + character.getName() + "\n" +
                         "Race: " + character.getRace() + "\n" +
                         "Race Bonus: " + getRaceBonusDescription() + "\n" +
-                        "Class: " + character.getCharacterClass() + "\n\n" +
+                        "Class: " + character.getCharacterClass() + "\n" +
+                        "Difficulty: " + getDifficultyDescription() + "\n\n" +
 
                         "HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n" +
                         "AC: " + calculateAC() + "\n" +
@@ -877,8 +820,7 @@ public class BattlePanel extends JPanel {
                         + " ("
                         + getWeaponDamageDescription()
                         + ")\n" +
-                        "Armor: " + character.getArmor() + "\n" +
-                        "Shield: " + (character.hasShield() ? "Yes" : "No")
+                        "Armor: " + character.getArmor() + "\n"
         );
 
         JOptionPane.showMessageDialog(
@@ -914,23 +856,17 @@ public class BattlePanel extends JPanel {
     }
 
     private String getRaceBonusDescription() {
-
         switch (character.getRace()) {
             case "Human":
-                return "+1 STR, +1 CON, +1 LCK";
-
+                return "+1 STR, +1 DEX, +1 CON, +1 LCK";
             case "Elf":
-                return "+2 DEX, +1 INT";
-
+                return "+2 DEX, +1 CON, +1 LCK";
             case "Dwarf":
-                return "+2 CON, +1 WIS";
-
-            case "Half-Orc":
-                return "+2 STR, +1 CON";
-
+                return "+1 STR, +1 CON, +2 WIS";
+            case "Tiefling":
+                return "+2 INT, +2 LCK";
             case "Dragonborn":
-                return "+2 STR, +1 LCK";
-
+                return "+2 STR, +1 CON, +1 LCK";
             default:
                 return "None";
         }
@@ -965,13 +901,21 @@ public class BattlePanel extends JPanel {
         }
     }
 
+    private int applyDifficultyHp(int hp) {
+        if (character.hasHardcoreHpBonus()) {
+            return (int) Math.round(hp * 1.25);
+        }
+
+        return hp;
+    }
+
     private void createEnemies() {
         enemies = new Enemy[]{
-                new Enemy("Goblin", 10, 12, 2),
-                new Enemy("Skeleton", 15, 13, 3),
-                new Enemy("Orc", 22, 14, 3),
-                new Enemy("Hobgoblin", 30, 15, 4),
-                new Enemy("Young Dragon", 40, 16, 5)
+                new Enemy("Goblin", applyDifficultyHp(10), 12, 2),
+                new Enemy("Skeleton", applyDifficultyHp(15), 13, 3),
+                new Enemy("Orc", applyDifficultyHp(22), 14, 3),
+                new Enemy("Hobgoblin", applyDifficultyHp(30), 15, 4),
+                new Enemy("Young Dragon", applyDifficultyHp(40), 16, 5)
         };
     }
 
@@ -1054,6 +998,29 @@ public class BattlePanel extends JPanel {
 
         JMenu fileMenu = new JMenu("File");
 
+        JMenuItem mainMenuItem = new JMenuItem("Main Menu");
+
+        mainMenuItem.setAccelerator(
+                KeyStroke.getKeyStroke(
+                        KeyEvent.VK_M,
+                        InputEvent.CTRL_DOWN_MASK
+                )
+        );
+
+        mainMenuItem.addActionListener(e -> {
+
+            int choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Return to Main Menu? Unsaved progress will be lost.",
+                    "Confirm",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (choice == JOptionPane.YES_OPTION) {
+                mainFrame.showMainMenu();
+            }
+        });
+
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         saveItem.addActionListener(e -> saveCharacter());
@@ -1073,6 +1040,9 @@ public class BattlePanel extends JPanel {
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
         exitItem.addActionListener(e -> System.exit(0));
+
+        fileMenu.add(mainMenuItem);
+        fileMenu.addSeparator();
 
         fileMenu.add(saveItem);
         fileMenu.add(saveAsItem);
@@ -1154,7 +1124,10 @@ public class BattlePanel extends JPanel {
         );
 
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+                KeyStroke.getKeyStroke(
+                        KeyEvent.VK_C,
+                        InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK
+                ),
                 "characterSheet"
         );
 
@@ -1182,5 +1155,59 @@ public class BattlePanel extends JPanel {
                     }
                 }
         );
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(
+                        KeyEvent.VK_M,
+                        InputEvent.CTRL_DOWN_MASK
+                ),
+                "mainMenu"
+        );
+
+        rootPane.getActionMap().put(
+                "mainMenu",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        int choice = JOptionPane.showConfirmDialog(
+                                BattlePanel.this,
+                                "Return to Main Menu? Unsaved progress will be lost.",
+                                "Confirm",
+                                JOptionPane.YES_NO_OPTION
+                        );
+
+                        if (choice == JOptionPane.YES_OPTION) {
+                            mainFrame.showMainMenu();
+                        }
+                    }
+                }
+        );
+    }
+
+    private int applyDifficultyDamage(int damage) {
+        if (character.hasHardcoreDamageBonus()) {
+            return (int) Math.round(damage * 1.25);
+        }
+
+        return damage;
+    }
+
+    private String getDifficultyDescription() {
+        if (!"Hardcore".equals(character.getDifficulty())) {
+            return "Normal";
+        }
+
+        String description = "Hardcore";
+
+        if (character.hasHardcoreHpBonus()) {
+            description += " (+25% enemy HP)";
+        }
+
+        if (character.hasHardcoreDamageBonus()) {
+            description += " (+25% enemy damage)";
+        }
+
+        return description;
     }
 }
