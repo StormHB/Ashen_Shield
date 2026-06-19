@@ -653,22 +653,45 @@ public class BattlePanel extends JPanel {
             int firstRoll = rollDice(6);
             int secondRoll = rollDice(6);
             int damageModifier = enemy.getAttackBonus();
-            int damage = firstRoll + secondRoll + damageModifier;
-            damage = applyDifficultyDamage(damage);
+            int baseDamage = firstRoll + secondRoll + damageModifier;
+            int damage = applyDifficultyDamage(baseDamage);
             damagePlayer(damage);
 
             battleLogArea.append("Natural 20! Critical Hit!\n");
-            battleLogArea.append(
-                    "Critical Damage Roll: "
-                            + firstRoll
-                            + " + "
-                            + secondRoll
-                            + " + "
-                            + damageModifier
-                            + " = "
-                            + damage
-                            + "\n"
-            );
+            if (character.hasHardcoreDamageBonus()) {
+
+                battleLogArea.append(
+                        "Critical Damage Roll: "
+                                + firstRoll
+                                + " + "
+                                + secondRoll
+                                + " + "
+                                + damageModifier
+                                + " = "
+                                + baseDamage
+                                + "\n"
+                );
+
+                battleLogArea.append(
+                        "Total Damage (Hardcore bonus): "
+                                + damage
+                                + "\n"
+                );
+
+            } else {
+
+                battleLogArea.append(
+                        "Critical Damage Roll: "
+                                + firstRoll
+                                + " + "
+                                + secondRoll
+                                + " + "
+                                + damageModifier
+                                + " = "
+                                + damage
+                                + "\n"
+                );
+            }
             battleLogArea.append(character.getName() + " HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n");
 
             checkPlayerDefeated();
@@ -679,21 +702,45 @@ public class BattlePanel extends JPanel {
         if (totalAttack >= calculateAC()) {
             int damageRoll = rollDice(6);
             int damageModifier = calculateEnemyDamageModifier();
-            int damage = damageRoll + damageModifier;
-            damage = applyDifficultyDamage(damage);
+
+            int baseDamage = damageRoll + damageModifier;
+            int damage = applyDifficultyDamage(baseDamage);
 
             damagePlayer(damage);
 
             battleLogArea.append("Hit!\n");
-            battleLogArea.append(
-                    "Damage Roll: "
-                            + damageRoll
-                            + " + "
-                            + damageModifier
-                            + " = "
-                            + damage
-                            + "\n"
-            );
+
+            if (character.hasHardcoreDamageBonus()) {
+
+                battleLogArea.append(
+                        "Damage Roll: "
+                                + damageRoll
+                                + " + "
+                                + damageModifier
+                                + " = "
+                                + baseDamage
+                                + "\n"
+                );
+
+                battleLogArea.append(
+                        "Total Damage (Hardcore bonus): "
+                                + damage
+                                + "\n"
+                );
+
+            } else {
+
+                battleLogArea.append(
+                        "Damage Roll: "
+                                + damageRoll
+                                + " + "
+                                + damageModifier
+                                + " = "
+                                + damage
+                                + "\n"
+                );
+            }
+
             battleLogArea.append(character.getName() + " HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n");
 
             checkPlayerDefeated();
