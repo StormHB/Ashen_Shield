@@ -4,6 +4,7 @@ import ashen.model.Enemy;
 import ashen.model.GameCharacter;
 import ashen.model.Stats;
 import ashen.service.SaveLoadService;
+import ashen.service.HighScoreService;
 
 import java.io.File;
 
@@ -1245,6 +1246,10 @@ public class BattlePanel extends JPanel {
         exportLogItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
         exportLogItem.addActionListener(e -> exportBattleLog());
 
+        JMenuItem highScoresItem = new JMenuItem("High Scores");
+        highScoresItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
+        highScoresItem.addActionListener(e -> GuiUtils.showHighScores(this, new HighScoreService()));
+
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
         exitItem.addActionListener(e -> System.exit(0));
@@ -1256,6 +1261,7 @@ public class BattlePanel extends JPanel {
         fileMenu.add(saveAsItem);
         fileMenu.add(loadItem);
         fileMenu.add(exportLogItem);
+        fileMenu.add(highScoresItem);
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
 

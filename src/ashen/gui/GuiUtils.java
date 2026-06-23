@@ -2,6 +2,7 @@ package ashen.gui;
 
 import ashen.model.GameCharacter;
 import ashen.service.SaveLoadService;
+import ashen.service.HighScoreService;
 
 import javax.swing.*;
 import java.io.File;
@@ -79,6 +80,44 @@ public final class GuiUtils {
                     parent,
                     "Failed to save character.",
                     "Save Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    /**
+     * Loads high scores from a text file and displays them in a dialog.
+     *
+     * @param parent component used as the parent for dialog windows
+     * @param highScoreService service used for reading high scores
+     */
+    public static void showHighScores(
+            Component parent,
+            HighScoreService highScoreService
+    ) {
+        try {
+            JTextArea highScoresArea = new JTextArea(
+                    highScoreService.loadHighScores(),
+                    15,
+                    40
+            );
+
+            highScoresArea.setEditable(false);
+            highScoresArea.setLineWrap(true);
+            highScoresArea.setWrapStyleWord(true);
+
+            JOptionPane.showMessageDialog(
+                    parent,
+                    new JScrollPane(highScoresArea),
+                    "High Scores",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(
+                    parent,
+                    "Failed to load high scores.",
+                    "High Score Error",
                     JOptionPane.ERROR_MESSAGE
             );
         }

@@ -1,5 +1,7 @@
 package ashen.gui;
 
+import ashen.service.HighScoreService;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -47,9 +49,11 @@ public class MainMenuPanel extends JPanel {
 
         JButton newCharacterButton = GuiUtils.createMenuButton("New Character");
         JButton loadCharacterButton = GuiUtils.createMenuButton("Load Character");
+        JButton highScoresButton = GuiUtils.createMenuButton("High Scores");
         JButton exitButton = GuiUtils.createMenuButton("Exit");
 
         loadCharacterButton.addActionListener(e -> mainFrame.loadCharacter());
+        highScoresButton.addActionListener(e -> GuiUtils.showHighScores(this, new HighScoreService()));
         newCharacterButton.addActionListener(e -> mainFrame.showCharacterCreation());
         exitButton.addActionListener(e -> System.exit(0));
 
@@ -73,6 +77,9 @@ public class MainMenuPanel extends JPanel {
         centerPanel.add(loadCharacterButton, gbc);
 
         gbc.gridy = 4;
+        centerPanel.add(highScoresButton, gbc);
+
+        gbc.gridy = 5;
         centerPanel.add(exitButton, gbc);
 
         add(centerPanel, BorderLayout.CENTER);

@@ -2,10 +2,12 @@ package ashen.gui;
 
 import ashen.model.GameCharacter;
 import ashen.service.SaveLoadService;
+import ashen.service.HighScoreService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 /**
  * Screen shown after the player defeats an enemy.
@@ -19,6 +21,8 @@ public class VictoryPanel extends JPanel {
     private int defeatedEnemyIndex;
     private String defeatedEnemyName;
     private SaveLoadService saveLoadService;
+    private HighScoreService highScoreService;
+    private JButton saveScoreButton;
 
     private JButton shortRestButton;
 
@@ -38,6 +42,7 @@ public class VictoryPanel extends JPanel {
         this.defeatedEnemyIndex = defeatedEnemyIndex;
         this.defeatedEnemyName = defeatedEnemyName;
         this.saveLoadService = new SaveLoadService();
+        this.highScoreService = new HighScoreService();
 
         layoutComponents();
     }
@@ -84,6 +89,7 @@ public class VictoryPanel extends JPanel {
         JButton nextBattleButton = GuiUtils.createMenuButton("Next Battle (N)");
         JButton mainMenuButton = GuiUtils.createMenuButton("Main Menu");
         JButton saveButton = GuiUtils.createMenuButton("Save Character");
+        saveScoreButton = GuiUtils.createMenuButton("Save Score");
         JButton exitButton = GuiUtils.createMenuButton("Exit");
 
         if (!campaignCompleted) {
@@ -94,6 +100,7 @@ public class VictoryPanel extends JPanel {
 
         mainMenuButton.addActionListener(e -> mainFrame.showMainMenu());
         saveButton.addActionListener(e -> saveCharacter());
+        saveScoreButton.addActionListener(e -> saveHighScore());
         exitButton.addActionListener(e -> System.exit(0));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -118,12 +125,15 @@ public class VictoryPanel extends JPanel {
 
         if (campaignCompleted) {
             gbc.gridy = 4;
-            centerPanel.add(mainMenuButton, gbc);
+            centerPanel.add(saveScoreButton, gbc);
 
             gbc.gridy = 5;
-            centerPanel.add(saveButton, gbc);
+            centerPanel.add(mainMenuButton, gbc);
 
             gbc.gridy = 6;
+            centerPanel.add(saveButton, gbc);
+
+            gbc.gridy = 7;
             centerPanel.add(exitButton, gbc);
         } else {
             gbc.gridy = 4;
@@ -189,6 +199,32 @@ public class VictoryPanel extends JPanel {
 
     private void saveCharacter() {
         GuiUtils.saveCharacterWithConfirmation(this, saveLoadService, character);
+    }
+
+    /**
+     * Saves the completed campaign score to the high score text file.
+     */
+    private void saveHighScore() {
+        try {
+            highScoreService.saveHighScore(character);
+
+            saveScoreButton.setEnabled(false);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Score saved successfully.",
+                    "High Score Saved",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Failed to save high score.",
+                    "High Score Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     /**
