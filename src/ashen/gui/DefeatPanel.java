@@ -37,9 +37,9 @@ public class DefeatPanel extends JPanel {
         JLabel message = new JLabel("Your journey ends here.", JLabel.CENTER);
         message.setFont(new Font("SansSerif", Font.PLAIN, 20));
 
-        JButton mainMenuButton = createMenuButton("Main Menu");
-        JButton saveButton = createMenuButton("Save Character");
-        JButton exitButton = createMenuButton("Exit");
+        JButton mainMenuButton = GuiUtils.createMenuButton("Main Menu");
+        JButton saveButton = GuiUtils.createMenuButton("Save Character");
+        JButton exitButton = GuiUtils.createMenuButton("Exit");
 
         mainMenuButton.addActionListener(e -> mainFrame.showMainMenu());
         saveButton.addActionListener(e -> saveCharacter());
@@ -71,32 +71,7 @@ public class DefeatPanel extends JPanel {
         add(centerPanel, BorderLayout.CENTER);
     }
 
-    private JButton createMenuButton(String text) {
-        JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(280, 55));
-        button.setFont(new Font("SansSerif", Font.BOLD, 20));
-        button.setFocusPainted(false);
-        button.setBackground(Color.WHITE);
-        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        return button;
-    }
-
     private void saveCharacter() {
-        try {
-            String filePath = "DATA/" + character.getName() + ".ser";
-            saveLoadService.saveCharacter(character, filePath);
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Character saved successfully."
-            );
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Failed to save character.",
-                    "Save Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
+        GuiUtils.saveCharacterWithConfirmation(this, saveLoadService, character);
     }
 }

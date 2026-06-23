@@ -62,18 +62,14 @@ public class VictoryPanel extends JPanel {
                 JLabel.CENTER
         );
 
-        shortRestButton = createMenuButton("Short Rest (R)");
-        JButton nextBattleButton = createMenuButton("Next Battle (N)");
-        JButton mainMenuButton = createMenuButton("Main Menu");
-        JButton saveButton = createMenuButton("Save Character");
-        JButton exitButton = createMenuButton("Exit");
-
-        setupVictoryShortcuts(
-                shortRestButton,
-                nextBattleButton
-        );
+        shortRestButton = GuiUtils.createMenuButton("Short Rest (R)");
+        JButton nextBattleButton = GuiUtils.createMenuButton("Next Battle (N)");
+        JButton mainMenuButton = GuiUtils.createMenuButton("Main Menu");
+        JButton saveButton = GuiUtils.createMenuButton("Save Character");
+        JButton exitButton = GuiUtils.createMenuButton("Exit");
 
         if (!campaignCompleted) {
+            setupVictoryShortcuts(shortRestButton, nextBattleButton);
             shortRestButton.addActionListener(e -> shortRest(hpLabel));
             nextBattleButton.addActionListener(e -> mainFrame.showBattle(character, defeatedEnemyIndex + 1));
         }
@@ -128,16 +124,6 @@ public class VictoryPanel extends JPanel {
         add(centerPanel, BorderLayout.CENTER);
     }
 
-    private JButton createMenuButton(String text) {
-        JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(280, 55));
-        button.setFont(new Font("SansSerif", Font.BOLD, 20));
-        button.setFocusPainted(false);
-        button.setBackground(Color.WHITE);
-        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        return button;
-    }
-
     private void shortRest(JLabel hpLabel) {
 
         int hpBefore = character.getCurrentHp();
@@ -174,22 +160,7 @@ public class VictoryPanel extends JPanel {
     }
 
     private void saveCharacter() {
-        try {
-            String filePath = "DATA/" + character.getName() + ".ser";
-            saveLoadService.saveCharacter(character, filePath);
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Character saved successfully."
-            );
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Failed to save character.",
-                    "Save Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
+        GuiUtils.saveCharacterWithConfirmation(this, saveLoadService, character);
     }
 
     private void setupVictoryShortcuts(

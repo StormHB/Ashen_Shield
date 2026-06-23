@@ -46,4 +46,15 @@ public class Stats implements Serializable {
     public int getLuck() {
         return luck;
     }
+
+    public static int calculateModifier(int statValue) {
+        return Math.floorDiv(statValue - 10, 2);
+    }
+
+    public static String formatModifier(int modifier) {
+        if (modifier >= 0) {
+            return "+" + modifier;
+        }
+        return String.valueOf(modifier);
+    }
 }

@@ -29,9 +29,9 @@ public class MainMenuPanel extends JPanel {
         JLabel subtitle = new JLabel("Character Creation & Turn-Based Fantasy Combat", JLabel.CENTER);
         subtitle.setFont(new Font("SansSerif", Font.PLAIN, 20));
 
-        JButton newCharacterButton = createMenuButton("New Character");
-        JButton loadCharacterButton = createMenuButton("Load Character");
-        JButton exitButton = createMenuButton("Exit");
+        JButton newCharacterButton = GuiUtils.createMenuButton("New Character");
+        JButton loadCharacterButton = GuiUtils.createMenuButton("Load Character");
+        JButton exitButton = GuiUtils.createMenuButton("Exit");
 
         loadCharacterButton.addActionListener(e -> mainFrame.loadCharacter());
         newCharacterButton.addActionListener(e -> mainFrame.showCharacterCreation());
@@ -60,15 +60,5 @@ public class MainMenuPanel extends JPanel {
         centerPanel.add(exitButton, gbc);
 
         add(centerPanel, BorderLayout.CENTER);
-    }
-
-    private JButton createMenuButton(String text) {
-        JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(280, 55));
-        button.setFont(new Font("SansSerif", Font.BOLD, 20));
-        button.setFocusPainted(false);
-        button.setBackground(Color.WHITE);
-        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        return button;
     }
 }

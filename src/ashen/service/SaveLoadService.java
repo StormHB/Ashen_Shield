@@ -7,8 +7,15 @@ import java.io.*;
 public class SaveLoadService {
 
     public void saveCharacter(GameCharacter character, String filePath) throws IOException {
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            outputStream.writeObject(character);
+        File saveFile = new File(filePath);
+        File parentFolder = saveFile.getParentFile();
+
+        if (parentFolder != null && !parentFolder.exists()) {
+            parentFolder.mkdirs();
+        }
+
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(saveFile))) {
+            out.writeObject(character);
         }
     }
 

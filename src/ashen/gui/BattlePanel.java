@@ -2,6 +2,7 @@ package ashen.gui;
 
 import ashen.model.Enemy;
 import ashen.model.GameCharacter;
+import ashen.model.Stats;
 import ashen.service.SaveLoadService;
 
 import java.io.File;
@@ -55,11 +56,6 @@ public class BattlePanel extends JPanel {
         mainFrame.setJMenuBar(createBattleMenuBar());
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-
-        JLabel title = new JLabel("Battle Screen", JLabel.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 24));
-        title.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.BLACK));
-        add(title, BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new GridLayout(1, 2, 20, 0));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 20, 40));
@@ -127,7 +123,7 @@ public class BattlePanel extends JPanel {
         panel.add(new JLabel("Class: " + character.getCharacterClass()));
         panel.add(playerHpLabel);
         panel.add(playerAcLabel);
-        panel.add(new JLabel("Attack Bonus: " + formatModifier(calculateAttackBonus())));
+        panel.add(new JLabel("Attack Bonus: " + Stats.formatModifier(calculateAttackBonus())));
         panel.add(new JLabel("Weapon: " + character.getWeapon()));
         panel.add(new JLabel("Armor: " + character.getArmor()));
 
@@ -147,7 +143,7 @@ public class BattlePanel extends JPanel {
         panel.add(new JLabel("Name: " + enemy.getName()));
         panel.add(enemyHpLabel);
         panel.add(enemyAcLabel);
-        panel.add(new JLabel("Attack Bonus: " + formatModifier(enemy.getAttackBonus())));
+        panel.add(new JLabel("Attack Bonus: " + Stats.formatModifier(enemy.getAttackBonus())));
 
         return panel;
     }
@@ -366,27 +362,23 @@ public class BattlePanel extends JPanel {
         }
     }
 
-    private int calculateModifier(int statValue) {
-        return Math.floorDiv(statValue - 10, 2);
-    }
-
     private int calculateAbilityModifierForAttack() {
         String characterClass = character.getCharacterClass();
 
         if ("Fighter".equals(characterClass)) {
-            return calculateModifier(character.getStats().getStrength());
+            return Stats.calculateModifier(character.getStats().getStrength());
         }
 
         if ("Rogue".equals(characterClass) || "Ranger".equals(characterClass)) {
-            return calculateModifier(character.getStats().getDexterity());
+            return Stats.calculateModifier(character.getStats().getDexterity());
         }
 
         if ("Wizard".equals(characterClass)) {
-            return calculateModifier(character.getStats().getIntelligence());
+            return Stats.calculateModifier(character.getStats().getIntelligence());
         }
 
         if ("Druid".equals(characterClass)) {
-            return calculateModifier(character.getStats().getWisdom());
+            return Stats.calculateModifier(character.getStats().getWisdom());
         }
 
         return 0;
@@ -589,6 +581,10 @@ public class BattlePanel extends JPanel {
             ac += 2;
         }
 
+        if ("Longsword + Shield".equals(character.getWeapon())) {
+            ac += 2;
+        }
+
         return ac;
     }
 
@@ -615,14 +611,6 @@ public class BattlePanel extends JPanel {
             default:
                 return 4;
         }
-    }
-
-    private String formatModifier(int modifier) {
-        if (modifier >= 0) {
-            return "+" + modifier;
-        }
-
-        return String.valueOf(modifier);
     }
 
     private void enemyTurn() {
@@ -852,14 +840,14 @@ public class BattlePanel extends JPanel {
 
                         "HP: " + character.getCurrentHp() + "/" + character.getMaxHp() + "\n" +
                         "AC: " + calculateAC() + "\n" +
-                        "Attack Bonus: " + formatModifier(calculateAttackBonus()) + "\n\n" +
+                        "Attack Bonus: " + Stats.formatModifier(calculateAttackBonus()) + "\n\n" +
 
-                        "STR: " + character.getStats().getStrength() + " (" + formatModifier(calculateModifier(character.getStats().getStrength())) + ")\n" +
-                        "DEX: " + character.getStats().getDexterity() + " (" + formatModifier(calculateModifier(character.getStats().getDexterity())) + ")\n" +
-                        "CON: " + character.getStats().getConstitution() + " (" + formatModifier(calculateModifier(character.getStats().getConstitution())) + ")\n" +
-                        "INT: " + character.getStats().getIntelligence() + " (" + formatModifier(calculateModifier(character.getStats().getIntelligence())) + ")\n" +
-                        "WIS: " + character.getStats().getWisdom() + " (" + formatModifier(calculateModifier(character.getStats().getWisdom())) + ")\n" +
-                        "LCK: " + character.getStats().getLuck() + " (" + formatModifier(calculateModifier(character.getStats().getLuck())) + ")\n\n" +
+                        "STR: " + character.getStats().getStrength() + " (" + Stats.formatModifier(Stats.calculateModifier(character.getStats().getStrength())) + ")\n" +
+                        "DEX: " + character.getStats().getDexterity() + " (" + Stats.formatModifier(Stats.calculateModifier(character.getStats().getDexterity())) + ")\n" +
+                        "CON: " + character.getStats().getConstitution() + " (" + Stats.formatModifier(Stats.calculateModifier(character.getStats().getConstitution())) + ")\n" +
+                        "INT: " + character.getStats().getIntelligence() + " (" + Stats.formatModifier(Stats.calculateModifier(character.getStats().getIntelligence())) + ")\n" +
+                        "WIS: " + character.getStats().getWisdom() + " (" + Stats.formatModifier(Stats.calculateModifier(character.getStats().getWisdom())) + ")\n" +
+                        "LCK: " + character.getStats().getLuck() + " (" + Stats.formatModifier(Stats.calculateModifier(character.getStats().getLuck())) + ")\n\n" +
 
                         "Equipment\n" +
                         "---------\n" +
@@ -890,7 +878,7 @@ public class BattlePanel extends JPanel {
 
                         "HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + "\n" +
                         "AC: " + enemy.getArmorClass() + "\n" +
-                        "Attack Bonus: " + formatModifier(enemy.getAttackBonus()) + "\n" +
+                        "Attack Bonus: " + Stats.formatModifier(enemy.getAttackBonus()) + "\n" +
                         "Damage: 1d6 + " + calculateEnemyDamageModifier()
         );
 
@@ -1058,7 +1046,7 @@ public class BattlePanel extends JPanel {
 
             int choice = JOptionPane.showConfirmDialog(
                     this,
-                    "Return to Main Menu? Unsaved progress will be lost.",
+                    "Return to Main Menu? Current battle progress will be lost.",
                     "Confirm",
                     JOptionPane.YES_NO_OPTION
             );
@@ -1219,7 +1207,7 @@ public class BattlePanel extends JPanel {
 
                         int choice = JOptionPane.showConfirmDialog(
                                 BattlePanel.this,
-                                "Return to Main Menu? Unsaved progress will be lost.",
+                                "Return to Main Menu? Current battle progress will be lost.",
                                 "Confirm",
                                 JOptionPane.YES_NO_OPTION
                         );

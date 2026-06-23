@@ -218,12 +218,12 @@ public class CharacterCreationPanel extends JPanel {
         wisdomValueLabel = new JLabel(String.valueOf(wisdomBase));
         luckValueLabel = new JLabel(String.valueOf(luckBase));
 
-        strengthModifierLabel = new JLabel(formatModifier(calculateModifier(strengthBase)));
-        dexterityModifierLabel = new JLabel(formatModifier(calculateModifier(dexterityBase)));
-        constitutionModifierLabel = new JLabel(formatModifier(calculateModifier(constitutionBase)));
-        intelligenceModifierLabel = new JLabel(formatModifier(calculateModifier(intelligenceBase)));
-        wisdomModifierLabel = new JLabel(formatModifier(calculateModifier(wisdomBase)));
-        luckModifierLabel = new JLabel(formatModifier(calculateModifier(luckBase)));
+        strengthModifierLabel = new JLabel(Stats.formatModifier(Stats.calculateModifier(strengthBase)));
+        dexterityModifierLabel = new JLabel(Stats.formatModifier(Stats.calculateModifier(dexterityBase)));
+        constitutionModifierLabel = new JLabel(Stats.formatModifier(Stats.calculateModifier(constitutionBase)));
+        intelligenceModifierLabel = new JLabel(Stats.formatModifier(Stats.calculateModifier(intelligenceBase)));
+        wisdomModifierLabel = new JLabel(Stats.formatModifier(Stats.calculateModifier(wisdomBase)));
+        luckModifierLabel = new JLabel(Stats.formatModifier(Stats.calculateModifier(luckBase)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -344,24 +344,13 @@ public class CharacterCreationPanel extends JPanel {
         pointsRemainingLabel.setText("Points Remaining: " + pointsRemaining);
     }
 
-    private int calculateModifier(int statValue) {
-        return Math.floorDiv(statValue - 10, 2);
-    }
-
-    private String formatModifier(int modifier) {
-        if (modifier >= 0) {
-            return "+" + modifier;
-        }
-        return String.valueOf(modifier);
-    }
-
     private void updateModifierLabels() {
-        strengthModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(strengthValueLabel.getText()))));
-        dexterityModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(dexterityValueLabel.getText()))));
-        constitutionModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(constitutionValueLabel.getText()))));
-        intelligenceModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(intelligenceValueLabel.getText()))));
-        wisdomModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(wisdomValueLabel.getText()))));
-        luckModifierLabel.setText(formatModifier(calculateModifier(Integer.parseInt(luckValueLabel.getText()))));
+        strengthModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(strengthValueLabel.getText()))));
+        dexterityModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(dexterityValueLabel.getText()))));
+        constitutionModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(constitutionValueLabel.getText()))));
+        intelligenceModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(intelligenceValueLabel.getText()))));
+        wisdomModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(wisdomValueLabel.getText()))));
+        luckModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(luckValueLabel.getText()))));
     }
 
     private void randomizeStats() {
@@ -518,6 +507,16 @@ public class CharacterCreationPanel extends JPanel {
                     this,
                     "Character name cannot be empty.",
                     "Invalid Character",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        if (!name.matches("[a-zA-Z0-9 _-]+")) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Character name can only contain letters, numbers, spaces, underscores and hyphens.",
+                    "Invalid Character Name",
                     JOptionPane.WARNING_MESSAGE
             );
             return;
