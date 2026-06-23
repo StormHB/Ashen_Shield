@@ -62,7 +62,16 @@ public class HighScoreService {
                 String[] parts = line.split(";");
 
                 if (parts.length == 3) {
-                    scores.add(parts);
+                    try {
+                        int hp = Integer.parseInt(parts[2]);
+
+                        if (hp >= 0) {
+                            scores.add(parts);
+                        }
+
+                    } catch (NumberFormatException ignored) {
+                        // Skip invalid score entries
+                    }
                 }
             }
         }
