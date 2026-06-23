@@ -8,12 +8,22 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
+/**
+ * Main application window that controls panel navigation.
+ * Uses a CardLayout to switch between the main menu, character creation,
+ * battle, victory and defeat screens.
+ */
+
 public class MainFrame extends JFrame {
 
     private CardLayout cardLayout;
     private Container contentPane;
 
     private StringBuilder campaignBattleLog = new StringBuilder();
+
+    /**
+     * Creates the main frame and initializes the application layout.
+     */
 
     public MainFrame() {
         super("Ashen Shield");
@@ -38,6 +48,12 @@ public class MainFrame extends JFrame {
         contentPane.add(new CharacterCreationPanel(this), "characterCreation");
     }
 
+    /**
+     * Displays the defeat screen for the selected character.
+     *
+     * @param character character that was defeated in battle
+     */
+
     public void showDefeatPanel(GameCharacter character) {
         clearShortcuts();
         clearMenuBar();
@@ -45,6 +61,10 @@ public class MainFrame extends JFrame {
         revalidate();
         repaint();
     }
+
+    /**
+     * Displays the main menu and clears battle-specific menu actions.
+     */
 
     public void showMainMenu() {
         clearShortcuts();
@@ -54,6 +74,10 @@ public class MainFrame extends JFrame {
         repaint();
     }
 
+    /**
+     * Displays the character creation screen.
+     */
+
     public void showCharacterCreation() {
         clearShortcuts();
         clearMenuBar();
@@ -62,10 +86,23 @@ public class MainFrame extends JFrame {
         repaint();
     }
 
+    /**
+     * Starts a new battle sequence from the first enemy.
+     *
+     * @param character character used in combat
+     */
+
     public void showBattle(GameCharacter character) {
         clearCampaignBattleLog();
         showBattle(character, 0);
     }
+
+    /**
+     * Displays the battle screen for a specific enemy index.
+     *
+     * @param character character used in combat
+     * @param enemyIndex index of the enemy to fight
+     */
 
     public void showBattle(GameCharacter character, int enemyIndex) {
         clearShortcuts();
@@ -73,6 +110,10 @@ public class MainFrame extends JFrame {
         revalidate();
         repaint();
     }
+
+    /**
+     * Opens a file chooser, loads a saved character and starts a new battle.
+     */
 
     public void loadCharacter() {
         JFileChooser fileChooser = new JFileChooser("DATA");
@@ -109,6 +150,14 @@ public class MainFrame extends JFrame {
         }
     }
 
+    /**
+     * Displays the victory screen after an enemy is defeated.
+     *
+     * @param character character that won the battle
+     * @param defeatedEnemyIndex index of the defeated enemy
+     * @param defeatedEnemyName name of the defeated enemy
+     */
+
     public void showVictoryPanel(GameCharacter character, int defeatedEnemyIndex, String defeatedEnemyName) {
         clearShortcuts();
         clearMenuBar();
@@ -117,13 +166,29 @@ public class MainFrame extends JFrame {
         repaint();
     }
 
+    /**
+     * Adds text to the campaign battle log used for export.
+     *
+     * @param text log text to append
+     */
+
     public void appendToCampaignBattleLog(String text) {
         campaignBattleLog.append(text);
     }
 
+    /**
+     * Returns the collected campaign battle log.
+     *
+     * @return complete campaign battle log text
+     */
+
     public String getCampaignBattleLog() {
         return campaignBattleLog.toString();
     }
+
+    /**
+     * Clears the campaign battle log when starting a new run.
+     */
 
     public void clearCampaignBattleLog() {
         campaignBattleLog.setLength(0);

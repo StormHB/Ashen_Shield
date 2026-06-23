@@ -5,6 +5,11 @@ import java.awt.*;
 import ashen.model.GameCharacter;
 import ashen.model.Stats;
 
+/**
+ * Screen used to create a new player character.
+ * Handles race, class, weapon, armor, difficulty selection and stat allocation.
+ */
+
 public class CharacterCreationPanel extends JPanel {
 
     private MainFrame mainFrame;
@@ -56,10 +61,20 @@ public class CharacterCreationPanel extends JPanel {
     private final Color lightBonusColor = new Color(180, 140, 0);
     private final Color strongBonusColor = new Color(0, 180, 0);
 
+    /**
+     * Creates the character creation panel.
+     *
+     * @param mainFrame main frame used for navigation after character creation
+     */
+
     public CharacterCreationPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         layoutComponents();
     }
+
+    /**
+     * Builds the character creation layout and initializes its controls.
+     */
 
     private void layoutComponents() {
         setLayout(new BorderLayout());
@@ -98,11 +113,24 @@ public class CharacterCreationPanel extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Creates a bordered section panel used by the character creation screen.
+     *
+     * @param title title displayed on the section border
+     * @return configured section panel
+     */
+
     private JPanel createSectionPanel(String title) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 2), title));
         return panel;
     }
+
+    /**
+     * Adds name, race, class, equipment and difficulty controls to the options panel.
+     *
+     * @param panel panel that receives the controls
+     */
 
     private void addCharacterOptions(JPanel panel) {
         JPanel formPanel = new JPanel(new GridBagLayout());
@@ -194,6 +222,16 @@ public class CharacterCreationPanel extends JPanel {
         panel.add(formPanel, BorderLayout.NORTH);
     }
 
+    /**
+     * Adds a label and input component to a GridBagLayout form row.
+     *
+     * @param panel target panel
+     * @param gbc layout constraints reused for the row
+     * @param row row index
+     * @param labelText text displayed by the row label
+     * @param component input component added to the row
+     */
+
     private void addFormRow(JPanel panel, GridBagConstraints gbc, int row, String labelText, JComponent component) {
         gbc.gridx = 0;
         gbc.gridy = row;
@@ -204,6 +242,12 @@ public class CharacterCreationPanel extends JPanel {
         gbc.weightx = 1;
         panel.add(component, gbc);
     }
+
+    /**
+     * Adds stat allocation controls to the stats panel.
+     *
+     * @param panel panel that receives stat controls
+     */
 
     private void addStatsPanel(JPanel panel) {
         JPanel statsPanel = new JPanel(new GridBagLayout());
@@ -256,6 +300,17 @@ public class CharacterCreationPanel extends JPanel {
         statsPanel.add(randomizeButton, gbc);
     }
 
+    /**
+     * Adds one ability score row with decrease and increase buttons.
+     *
+     * @param panel target panel
+     * @param gbc layout constraints reused for the row
+     * @param row row index
+     * @param statName ability score name
+     * @param valueLabel label that displays the ability score value
+     * @param modifierLabel label that displays the ability modifier
+     */
+
     private void addStatRow(JPanel panel, GridBagConstraints gbc, int row, String statName, JLabel valueLabel, JLabel modifierLabel) {
         JButton minusButton = new JButton("-");
         JButton plusButton = new JButton("+");
@@ -283,6 +338,12 @@ public class CharacterCreationPanel extends JPanel {
         modifierLabel.setPreferredSize(new Dimension(30, 25));
         panel.add(modifierLabel, gbc);
     }
+
+    /**
+     * Increases a stat value when points are available.
+     *
+     * @param valueLabel label containing the stat value to increase
+     */
 
     private void increaseStat(JLabel valueLabel) {
         if (pointsRemaining <= 0) {
@@ -314,6 +375,12 @@ public class CharacterCreationPanel extends JPanel {
         updateModifierLabels();
     }
 
+    /**
+     * Decreases a stat value and restores one available point.
+     *
+     * @param valueLabel label containing the stat value to decrease
+     */
+
     private void decreaseStat(JLabel valueLabel) {
         if (valueLabel == strengthValueLabel && strengthBase > 8) {
             strengthBase--;
@@ -344,6 +411,10 @@ public class CharacterCreationPanel extends JPanel {
         pointsRemainingLabel.setText("Points Remaining: " + pointsRemaining);
     }
 
+    /**
+     * Recalculates all displayed stat modifiers.
+     */
+
     private void updateModifierLabels() {
         strengthModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(strengthValueLabel.getText()))));
         dexterityModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(dexterityValueLabel.getText()))));
@@ -352,6 +423,10 @@ public class CharacterCreationPanel extends JPanel {
         wisdomModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(wisdomValueLabel.getText()))));
         luckModifierLabel.setText(Stats.formatModifier(Stats.calculateModifier(Integer.parseInt(luckValueLabel.getText()))));
     }
+
+    /**
+     * Randomly distributes all available stat points among the ability scores.
+     */
 
     private void randomizeStats() {
         resetStats();
@@ -370,6 +445,10 @@ public class CharacterCreationPanel extends JPanel {
         }
     }
 
+    /**
+     * Resets all base stats and available points to their starting values.
+     */
+
     private void resetStats() {
         pointsRemaining = 12;
 
@@ -385,6 +464,10 @@ public class CharacterCreationPanel extends JPanel {
         updateModifierLabels();
     }
 
+    /**
+     * Updates displayed stat values and dependent modifier/color labels.
+     */
+
     private void updateStatLabels() {
         strengthValueLabel.setText(String.valueOf(Math.min(20, strengthBase + strengthRaceBonus)));
         dexterityValueLabel.setText(String.valueOf(Math.min(20, dexterityBase + dexterityRaceBonus)));
@@ -395,6 +478,10 @@ public class CharacterCreationPanel extends JPanel {
 
         updateStatColors();
     }
+
+    /**
+     * Applies race bonuses based on the selected race.
+     */
 
     private void applyRaceBonuses() {
         resetRaceBonuses();
@@ -441,6 +528,10 @@ public class CharacterCreationPanel extends JPanel {
         luckRaceBonus = 0;
     }
 
+    /**
+     * Updates stat label colors to visually indicate race bonuses.
+     */
+
     private void updateStatColors() {
         setStatColor(strengthValueLabel, strengthRaceBonus);
         setStatColor(dexterityValueLabel, dexterityRaceBonus);
@@ -449,6 +540,13 @@ public class CharacterCreationPanel extends JPanel {
         setStatColor(wisdomValueLabel, wisdomRaceBonus);
         setStatColor(luckValueLabel, luckRaceBonus);
     }
+
+    /**
+     * Sets a stat label color based on the size of its race bonus.
+     *
+     * @param label stat value label
+     * @param bonus race bonus applied to the stat
+     */
 
     private void setStatColor(JLabel label, int bonus) {
         if (bonus >= 2) {
@@ -459,6 +557,10 @@ public class CharacterCreationPanel extends JPanel {
             label.setForeground(defaultStatColor);
         }
     }
+
+    /**
+     * Updates available weapons and armor based on the selected class.
+     */
 
     private void updateClassEquipment() {
         String selectedClass = (String) classBox.getSelectedItem();
@@ -487,17 +589,33 @@ public class CharacterCreationPanel extends JPanel {
         updateArmorTooltip();
     }
 
+    /**
+     * Adds weapon options to the weapon combo box.
+     *
+     * @param weapons weapon names to add
+     */
+
     private void addWeapons(String... weapons) {
         for (String weapon : weapons) {
             weaponBox.addItem(weapon);
         }
     }
 
+    /**
+     * Adds armor options to the armor combo box.
+     *
+     * @param armorList armor names to add
+     */
+
     private void addArmor(String... armorList) {
         for (String armor : armorList) {
             armorBox.addItem(armor);
         }
     }
+
+    /**
+     * Validates user input, applies final class/equipment bonuses and creates the player character.
+     */
 
     private void createCharacter() {
         String name = nameField.getText().trim();
@@ -615,6 +733,10 @@ public class CharacterCreationPanel extends JPanel {
         mainFrame.showBattle(character);
     }
 
+    /**
+     * Updates the class description text for the selected class.
+     */
+
     private void updateClassDescription() {
         String selectedClass = (String) classBox.getSelectedItem();
 
@@ -658,6 +780,10 @@ public class CharacterCreationPanel extends JPanel {
         }
     }
 
+    /**
+     * Updates the weapon tooltip for the currently selected weapon.
+     */
+
     private void updateWeaponTooltip() {
         String selectedWeapon = (String) weaponBox.getSelectedItem();
 
@@ -680,6 +806,10 @@ public class CharacterCreationPanel extends JPanel {
         }
     }
 
+    /**
+     * Updates the armor tooltip for the currently selected armor.
+     */
+
     private void updateArmorTooltip() {
         String selectedArmor = (String) armorBox.getSelectedItem();
 
@@ -699,6 +829,10 @@ public class CharacterCreationPanel extends JPanel {
             armorBox.setToolTipText(null);
         }
     }
+
+    /**
+     * Enables or disables hardcore option check boxes based on selected difficulty.
+     */
 
     private void updateHardcoreOptions() {
         boolean hardcore = hardDifficultyButton.isSelected();

@@ -6,11 +6,23 @@ import ashen.service.SaveLoadService;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Screen shown when the player character is defeated.
+ * Allows returning to the main menu, saving the character or exiting the game.
+ */
+
 public class DefeatPanel extends JPanel {
 
     private MainFrame mainFrame;
     private GameCharacter character;
     private SaveLoadService saveLoadService;
+
+    /**
+     * Creates the defeat panel for the given character.
+     *
+     * @param mainFrame main frame used for navigation
+     * @param character defeated character
+     */
 
     public DefeatPanel(MainFrame mainFrame, GameCharacter character) {
         this.mainFrame = mainFrame;
@@ -19,6 +31,10 @@ public class DefeatPanel extends JPanel {
 
         layoutComponents();
     }
+
+    /**
+     * Builds and arranges all Swing components on this panel.
+     */
 
     private void layoutComponents() {
         setLayout(new BorderLayout());
@@ -70,6 +86,10 @@ public class DefeatPanel extends JPanel {
 
         add(centerPanel, BorderLayout.CENTER);
     }
+
+    /**
+     * Saves the current character using the shared confirmation dialog.
+     */
 
     private void saveCharacter() {
         GuiUtils.saveCharacterWithConfirmation(this, saveLoadService, character);

@@ -3,14 +3,30 @@ package ashen.gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Main menu screen of the application.
+ * Provides actions for creating a new character, loading a saved character
+ * and exiting the program.
+ */
+
 public class MainMenuPanel extends JPanel {
 
     private MainFrame mainFrame;
+
+    /**
+     * Creates the main menu panel.
+     *
+     * @param mainFrame main frame used for navigation actions
+     */
 
     public MainMenuPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         layoutComponents();
     }
+
+    /**
+     * Builds and arranges all Swing components on this panel.
+     */
 
     private void layoutComponents() {
         setLayout(new BorderLayout());

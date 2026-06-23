@@ -12,6 +12,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.PrintWriter;
 
+/**
+ * Main combat screen for Ashen Shield.
+ * Handles player attacks, enemy turns, victory and defeat checks,
+ * combat logging, battle shortcuts and character saving during battle.
+ */
+
 public class BattlePanel extends JPanel {
 
     private GameCharacter character;
@@ -40,6 +46,14 @@ public class BattlePanel extends JPanel {
 
     private MainFrame mainFrame;
 
+    /**
+     * Creates a battle panel for the selected character and enemy.
+     *
+     * @param mainFrame main frame used for navigation and shared campaign log
+     * @param character player character used in combat
+     * @param enemyIndex index of the enemy to fight
+     */
+
     public BattlePanel(MainFrame mainFrame, GameCharacter character, int enemyIndex) {
         this.mainFrame = mainFrame;
         this.character = character;
@@ -51,6 +65,11 @@ public class BattlePanel extends JPanel {
 
         layoutComponents();
     }
+
+    /**
+     * Builds the battle screen layout, including player data, enemy data,
+     * battle log, action buttons and keyboard shortcuts.
+     */
 
     private void layoutComponents() {
         mainFrame.setJMenuBar(createBattleMenuBar());
@@ -108,6 +127,12 @@ public class BattlePanel extends JPanel {
         setupBattleShortcuts();
     }
 
+    /**
+     * Creates the panel that displays player combat information.
+     *
+     * @return configured player information panel
+     */
+
     private JPanel createPlayerPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.setBorder(BorderFactory.createTitledBorder(
@@ -130,6 +155,12 @@ public class BattlePanel extends JPanel {
         return panel;
     }
 
+    /**
+     * Creates the panel that displays enemy combat information.
+     *
+     * @return configured enemy information panel
+     */
+
     private JPanel createEnemyPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.setBorder(BorderFactory.createTitledBorder(
@@ -148,6 +179,10 @@ public class BattlePanel extends JPanel {
         return panel;
     }
 
+    /**
+     * Handles the attack button action and scrolls the battle log after combat text is added.
+     */
+
     private void handleAttack() {
         playerAttack(true);
         scrollBattleLogToBottom();
@@ -158,6 +193,13 @@ public class BattlePanel extends JPanel {
                 battleLogArea.getDocument().getLength()
         );
     }
+
+    /**
+     * Resolves the player attack, including class bonuses, hit checks, damage,
+     * critical hits and optional enemy counterattack.
+     *
+     * @param enemyResponds true when the enemy should attack after the player
+     */
 
     private void playerAttack(boolean enemyResponds) {
 
@@ -352,6 +394,10 @@ public class BattlePanel extends JPanel {
         enemyHpLabel.setText("HP: " + enemy.getCurrentHp() + "/" + enemy.getMaxHp());
     }
 
+    /**
+     * Checks whether the current enemy is defeated and prepares the next action button.
+     */
+
     private void checkEnemyDefeated() {
         if (enemy.isDefeated()) {
             battleLogArea.append(enemy.getName() + " has been defeated!\n");
@@ -361,6 +407,12 @@ public class BattlePanel extends JPanel {
             saveCurrentBattleLogToCampaignLog();
         }
     }
+
+    /**
+     * Selects the correct ability modifier for the character's current class or weapon.
+     *
+     * @return ability modifier used for attack and damage calculations
+     */
 
     private int calculateAbilityModifierForAttack() {
         String characterClass = character.getCharacterClass();
@@ -384,6 +436,12 @@ public class BattlePanel extends JPanel {
         return 0;
     }
 
+    /**
+     * Calculates the total player attack bonus.
+     *
+     * @return proficiency and ability modifier combined as attack bonus
+     */
+
     private int calculateAttackBonus() {
         int proficiencyBonus = 2;
         int attackBonus = proficiencyBonus + calculateAbilityModifierForAttack();
@@ -394,6 +452,12 @@ public class BattlePanel extends JPanel {
 
         return attackBonus;
     }
+
+    /**
+     * Calculates player damage based on weapon, class features and ability modifier.
+     *
+     * @return final player damage for the current attack
+     */
 
     private int calculatePlayerDamage() {
 
@@ -493,6 +557,12 @@ public class BattlePanel extends JPanel {
         }
     }
 
+    /**
+     * Returns the main ability score name used by the current character.
+     *
+     * @return main stat name for log output
+     */
+
     private String getMainStatName() {
 
         switch (character.getCharacterClass()) {
@@ -513,6 +583,10 @@ public class BattlePanel extends JPanel {
                 return "Modifier";
         }
     }
+
+    /**
+     * Applies stored ranger poison damage at the end of the enemy turn.
+     */
 
     private void applyRangerPoison() {
 
@@ -544,6 +618,12 @@ public class BattlePanel extends JPanel {
 
         checkEnemyDefeated();
     }
+
+    /**
+     * Calculates player armor class from armor, dexterity and shield equipment.
+     *
+     * @return calculated armor class
+     */
 
     private int calculateAC() {
         int ac;
@@ -588,9 +668,22 @@ public class BattlePanel extends JPanel {
         return ac;
     }
 
+    /**
+     * Rolls a die with the given number of sides.
+     *
+     * @param sides number of die sides
+     * @return random roll result from 1 to sides
+     */
+
     private int rollDice(int sides) {
         return (int) (Math.random() * sides) + 1;
     }
+
+    /**
+     * Returns the base weapon damage die for the equipped weapon.
+     *
+     * @return number of sides for the weapon damage die
+     */
 
     private int getWeaponDamageDice() {
         switch (character.getWeapon()) {
@@ -612,6 +705,11 @@ public class BattlePanel extends JPanel {
                 return 4;
         }
     }
+
+    /**
+     * Resolves the enemy attack, including hit checks, critical hits,
+     * difficulty modifiers and post-turn effects.
+     */
 
     private void enemyTurn() {
         int d20Roll = rollDice(20);
@@ -738,6 +836,12 @@ public class BattlePanel extends JPanel {
         }
     }
 
+    /**
+     * Applies damage to the player and updates the HP display.
+     *
+     * @param damage damage amount dealt to the player
+     */
+
     private void damagePlayer(int damage) {
         character.takeDamage(damage);
         updatePlayerHpLabel();
@@ -746,6 +850,10 @@ public class BattlePanel extends JPanel {
     private void updatePlayerHpLabel() {
         playerHpLabel.setText("HP: " + character.getCurrentHp() + "/" + character.getMaxHp());
     }
+
+    /**
+     * Checks whether the player has been defeated and disables combat actions.
+     */
 
     private void checkPlayerDefeated() {
 
@@ -765,10 +873,18 @@ public class BattlePanel extends JPanel {
         }
     }
 
+    /**
+     * Saves the current character to the default DATA folder path.
+     */
+
     private void saveCharacter() {
         String filePath = "DATA/" + character.getName() + ".ser";
         saveCharacterToFile(filePath);
     }
+
+    /**
+     * Opens a file chooser and saves the current character to a selected file.
+     */
 
     private void saveCharacterAs() {
         JFileChooser fileChooser = new JFileChooser(new File("DATA"));
@@ -788,6 +904,12 @@ public class BattlePanel extends JPanel {
             saveCharacterToFile(filePath);
         }
     }
+
+    /**
+     * Saves the current character to a specific file path after overwrite confirmation.
+     *
+     * @param filePath destination save file path
+     */
 
     private void saveCharacterToFile(String filePath) {
         File saveFile = new File(filePath);
@@ -823,6 +945,10 @@ public class BattlePanel extends JPanel {
             );
         }
     }
+
+    /**
+     * Opens a dialog window with detailed character information.
+     */
 
     private void showCharacterSheet() {
         JTextArea sheetArea = new JTextArea();
@@ -866,6 +992,10 @@ public class BattlePanel extends JPanel {
         );
     }
 
+    /**
+     * Opens a dialog window with detailed enemy information.
+     */
+
     private void showEnemySheet() {
         JTextArea sheetArea = new JTextArea();
         sheetArea.setEditable(false);
@@ -890,6 +1020,12 @@ public class BattlePanel extends JPanel {
         );
     }
 
+    /**
+     * Returns a text description of the selected race bonuses.
+     *
+     * @return race bonus description
+     */
+
     private String getRaceBonusDescription() {
         switch (character.getRace()) {
             case "Human":
@@ -906,6 +1042,12 @@ public class BattlePanel extends JPanel {
                 return "None";
         }
     }
+
+    /**
+     * Returns a readable description of the equipped weapon damage.
+     *
+     * @return weapon damage description
+     */
 
     private String getWeaponDamageDescription() {
 
@@ -936,6 +1078,13 @@ public class BattlePanel extends JPanel {
         }
     }
 
+    /**
+     * Applies difficulty modifiers to enemy HP values.
+     *
+     * @param hp base enemy HP
+     * @return modified HP value
+     */
+
     private int applyDifficultyHp(int hp) {
         if (character.hasHardcoreHpBonus()) {
             return (int) Math.round(hp * 1.25);
@@ -944,15 +1093,11 @@ public class BattlePanel extends JPanel {
         return hp;
     }
 
-    private void createEnemies() {
-        enemies = new Enemy[]{
-                new Enemy("Goblin", applyDifficultyHp(10), 12, 2),
-                new Enemy("Skeleton", applyDifficultyHp(15), 13, 3),
-                new Enemy("Orc", applyDifficultyHp(22), 14, 3),
-                new Enemy("Hobgoblin", applyDifficultyHp(30), 15, 4),
-                new Enemy("Young Dragon", applyDifficultyHp(40), 16, 5)
-        };
-    }
+    /**
+     * Calculates the enemy damage modifier for the current enemy.
+     *
+     * @return enemy damage modifier
+     */
 
     private int calculateEnemyDamageModifier() {
         if ("Goblin".equals(enemy.getName())) {
@@ -977,6 +1122,24 @@ public class BattlePanel extends JPanel {
 
         return 1;
     }
+
+    /**
+     * Creates the ordered list of enemies for the campaign.
+     */
+
+    private void createEnemies() {
+        enemies = new Enemy[]{
+                new Enemy("Goblin", applyDifficultyHp(10), 12, 2),
+                new Enemy("Skeleton", applyDifficultyHp(15), 13, 3),
+                new Enemy("Orc", applyDifficultyHp(22), 14, 3),
+                new Enemy("Hobgoblin", applyDifficultyHp(30), 15, 4),
+                new Enemy("Young Dragon", applyDifficultyHp(40), 16, 5)
+        };
+    }
+
+    /**
+     * Exports the campaign battle log to a text file selected by the user.
+     */
 
     private void exportBattleLog() {
         JFileChooser fileChooser = new JFileChooser();
@@ -1021,12 +1184,22 @@ public class BattlePanel extends JPanel {
         }
     }
 
+    /**
+     * Adds the current battle log to the shared campaign log once per battle.
+     */
+
     private void saveCurrentBattleLogToCampaignLog() {
         if (!currentBattleLogSaved) {
             mainFrame.appendToCampaignBattleLog(battleLogArea.getText());
             currentBattleLogSaved = true;
         }
     }
+
+    /**
+     * Creates the battle menu bar with save, load, sheet, export and exit actions.
+     *
+     * @return configured battle menu bar
+     */
 
     private JMenuBar createBattleMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -1104,6 +1277,10 @@ public class BattlePanel extends JPanel {
 
         return menuBar;
     }
+
+    /**
+     * Registers keyboard shortcuts used during battle.
+     */
 
     private void setupBattleShortcuts() {
 
@@ -1220,6 +1397,13 @@ public class BattlePanel extends JPanel {
         );
     }
 
+    /**
+     * Applies difficulty damage modifiers to enemy damage.
+     *
+     * @param damage base damage amount
+     * @return modified damage amount
+     */
+
     private int applyDifficultyDamage(int damage) {
         if (character.hasHardcoreDamageBonus()) {
             return (int) Math.round(damage * 1.25);
@@ -1227,6 +1411,12 @@ public class BattlePanel extends JPanel {
 
         return damage;
     }
+
+    /**
+     * Returns a readable description of the selected difficulty options.
+     *
+     * @return difficulty description text
+     */
 
     private String getDifficultyDescription() {
         if (!"Hardcore".equals(character.getDifficulty())) {

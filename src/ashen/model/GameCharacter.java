@@ -2,6 +2,12 @@ package ashen.model;
 
 import java.io.Serializable;
 
+/**
+ * Represents the playable character created by the user.
+ * Stores identity, selected equipment, ability scores, difficulty options
+ * and current combat health.
+ */
+
 public class GameCharacter implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -19,6 +25,20 @@ public class GameCharacter implements Serializable {
 
     private boolean hardcoreHpBonus;
     private boolean hardcoreDamageBonus;
+
+    /**
+     * Creates a new playable character and calculates maximum HP from constitution.
+     *
+     * @param name character name
+     * @param race selected race
+     * @param characterClass selected class
+     * @param stats ability scores
+     * @param weapon selected weapon
+     * @param armor selected armor
+     * @param difficulty selected difficulty mode
+     * @param hardcoreHpBonus true if hardcore HP modifier is enabled
+     * @param hardcoreDamageBonus true if hardcore damage modifier is enabled
+     */
 
     public GameCharacter(String name, String race, String characterClass,
                          Stats stats, String weapon, String armor, String difficulty, boolean hardcoreHpBonus, boolean hardcoreDamageBonus) {
@@ -72,6 +92,12 @@ public class GameCharacter implements Serializable {
         return difficulty;
     }
 
+    /**
+     * Reduces character HP and prevents it from going below zero.
+     *
+     * @param damage amount of damage taken
+     */
+
     public void takeDamage(int damage) {
         currentHp -= damage;
 
@@ -79,6 +105,12 @@ public class GameCharacter implements Serializable {
             currentHp = 0;
         }
     }
+
+    /**
+     * Restores HP up to the character maximum HP value.
+     *
+     * @param amount amount of HP to restore
+     */
 
     public void heal(int amount) {
         currentHp += amount;
@@ -88,9 +120,19 @@ public class GameCharacter implements Serializable {
         }
     }
 
+    /**
+     * Checks whether the character has no remaining HP.
+     *
+     * @return true if the character is defeated
+     */
+
     public boolean isDefeated() {
         return currentHp <= 0;
     }
+
+    /**
+     * Restores the character to full HP.
+     */
 
     public void restoreFullHp() {
         currentHp = maxHp;

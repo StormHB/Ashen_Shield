@@ -8,10 +8,21 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.*;
 
+/**
+ * Utility class for shared Swing helper methods used by multiple panels.
+ */
+
 public final class GuiUtils {
 
     private GuiUtils() {
     }
+
+    /**
+     * Creates a styled menu button used on menu-like screens.
+     *
+     * @param text button label
+     * @return configured JButton instance
+     */
 
     public static JButton createMenuButton(String text) {
         JButton button = new JButton(text);
@@ -22,6 +33,14 @@ public final class GuiUtils {
         button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         return button;
     }
+
+    /**
+     * Saves a character after asking for confirmation when the target file exists.
+     *
+     * @param parent panel used as the parent for dialog windows
+     * @param saveLoadService service used for serialization
+     * @param character character to save
+     */
 
     public static void saveCharacterWithConfirmation(
             JPanel parent,

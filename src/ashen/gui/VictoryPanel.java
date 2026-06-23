@@ -7,6 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Screen shown after the player defeats an enemy.
+ * Handles short rest, moving to the next battle, saving and campaign completion.
+ */
+
 public class VictoryPanel extends JPanel {
 
     private MainFrame mainFrame;
@@ -16,6 +21,15 @@ public class VictoryPanel extends JPanel {
     private SaveLoadService saveLoadService;
 
     private JButton shortRestButton;
+
+    /**
+     * Creates the victory panel after a completed battle.
+     *
+     * @param mainFrame main frame used for navigation
+     * @param character victorious character
+     * @param defeatedEnemyIndex index of the defeated enemy
+     * @param defeatedEnemyName name of the defeated enemy
+     */
 
     public VictoryPanel(MainFrame mainFrame, GameCharacter character,
                         int defeatedEnemyIndex, String defeatedEnemyName) {
@@ -27,6 +41,10 @@ public class VictoryPanel extends JPanel {
 
         layoutComponents();
     }
+
+    /**
+     * Builds and arranges all Swing components on this panel.
+     */
 
     private void layoutComponents() {
         setLayout(new BorderLayout());
@@ -124,6 +142,12 @@ public class VictoryPanel extends JPanel {
         add(centerPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Restores part of the missing HP and updates the displayed HP label.
+     *
+     * @param hpLabel label that displays current HP
+     */
+
     private void shortRest(JLabel hpLabel) {
 
         int hpBefore = character.getCurrentHp();
@@ -159,9 +183,20 @@ public class VictoryPanel extends JPanel {
         );
     }
 
+    /**
+     * Saves the current character using the shared confirmation dialog.
+     */
+
     private void saveCharacter() {
         GuiUtils.saveCharacterWithConfirmation(this, saveLoadService, character);
     }
+
+    /**
+     * Registers keyboard shortcuts for short rest and moving to the next battle.
+     *
+     * @param shortRestButton button activated by the R shortcut
+     * @param nextBattleButton button activated by the N shortcut
+     */
 
     private void setupVictoryShortcuts(
             JButton shortRestButton,
