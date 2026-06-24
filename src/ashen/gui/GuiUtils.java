@@ -86,29 +86,54 @@ public final class GuiUtils {
     }
 
     /**
-     * Loads high scores from a text file and displays them in a dialog.
+     * Displays all high score categories in a tabbed dialog.
      *
-     * @param parent component used as the parent for dialog windows
-     * @param highScoreService service used for reading high scores
+     * @param parent parent component for the dialog
+     * @param highScoreService service used to load high scores
      */
+
     public static void showHighScores(
             Component parent,
             HighScoreService highScoreService
     ) {
         try {
-            JTextArea highScoresArea = new JTextArea(
-                    highScoreService.loadHighScores(),
-                    15,
-                    40
+            JTabbedPane tabbedPane = new JTabbedPane();
+
+            tabbedPane.addTab(
+                    "Normal",
+                    createHighScoreScrollPane(
+                            highScoreService,
+                            HighScoreService.NORMAL
+                    )
             );
 
-            highScoresArea.setEditable(false);
-            highScoresArea.setLineWrap(true);
-            highScoresArea.setWrapStyleWord(true);
+            tabbedPane.addTab(
+                    "Hardcore - HP",
+                    createHighScoreScrollPane(
+                            highScoreService,
+                            HighScoreService.HARDCORE_HP
+                    )
+            );
+
+            tabbedPane.addTab(
+                    "Hardcore - Damage",
+                    createHighScoreScrollPane(
+                            highScoreService,
+                            HighScoreService.HARDCORE_DAMAGE
+                    )
+            );
+
+            tabbedPane.addTab(
+                    "Hardcore - Full",
+                    createHighScoreScrollPane(
+                            highScoreService,
+                            HighScoreService.HARDCORE_FULL
+                    )
+            );
 
             JOptionPane.showMessageDialog(
                     parent,
-                    new JScrollPane(highScoresArea),
+                    tabbedPane,
                     "High Scores",
                     JOptionPane.INFORMATION_MESSAGE
             );
@@ -121,5 +146,34 @@ public final class GuiUtils {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+
+    /**
+     * Creates a scrollable text area containing all scores
+     * from the specified category.
+     *
+     * @param highScoreService service used to load scores
+     * @param category category to display
+     * @return scroll pane containing formatted scores
+     * @throws IOException if scores cannot be loaded
+     */
+
+    private static JScrollPane createHighScoreScrollPane(
+            HighScoreService highScoreService,
+            String category
+    ) throws IOException {
+
+        JTextArea highScoresArea = new JTextArea(
+                highScoreService.loadHighScoresForCategory(category),
+                15,
+                40
+        );
+
+        highScoresArea.setEditable(false);
+        highScoresArea.setLineWrap(true);
+        highScoresArea.setWrapStyleWord(true);
+        highScoresArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
+
+        return new JScrollPane(highScoresArea);
     }
 }
