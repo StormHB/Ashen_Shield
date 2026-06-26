@@ -1,8 +1,8 @@
 package ashen.gui;
 
 import ashen.model.GameCharacter;
-import ashen.service.SaveLoadService;
-import ashen.service.HighScoreService;
+import ashen.service.CharacterPersistenceService;
+import ashen.service.HighScoreProvider;
 
 import javax.swing.*;
 import java.io.File;
@@ -45,7 +45,7 @@ public final class GuiUtils {
 
     public static void saveCharacterWithConfirmation(
             JPanel parent,
-            SaveLoadService saveLoadService,
+            CharacterPersistenceService saveLoadService,
             GameCharacter character
     ) {
         try {
@@ -94,7 +94,7 @@ public final class GuiUtils {
 
     public static void showHighScores(
             Component parent,
-            HighScoreService highScoreService
+            HighScoreProvider highScoreService
     ) {
         try {
             JTabbedPane tabbedPane = new JTabbedPane();
@@ -103,7 +103,7 @@ public final class GuiUtils {
                     "Normal",
                     createHighScoreScrollPane(
                             highScoreService,
-                            HighScoreService.NORMAL
+                            HighScoreProvider.NORMAL
                     )
             );
 
@@ -111,7 +111,7 @@ public final class GuiUtils {
                     "Hardcore - HP",
                     createHighScoreScrollPane(
                             highScoreService,
-                            HighScoreService.HARDCORE_HP
+                            HighScoreProvider.HARDCORE_HP
                     )
             );
 
@@ -119,7 +119,7 @@ public final class GuiUtils {
                     "Hardcore - Damage",
                     createHighScoreScrollPane(
                             highScoreService,
-                            HighScoreService.HARDCORE_DAMAGE
+                            HighScoreProvider.HARDCORE_DAMAGE
                     )
             );
 
@@ -127,7 +127,7 @@ public final class GuiUtils {
                     "Hardcore - Full",
                     createHighScoreScrollPane(
                             highScoreService,
-                            HighScoreService.HARDCORE_FULL
+                            HighScoreProvider.HARDCORE_FULL
                     )
             );
 
@@ -159,7 +159,7 @@ public final class GuiUtils {
      */
 
     private static JScrollPane createHighScoreScrollPane(
-            HighScoreService highScoreService,
+            HighScoreProvider highScoreService,
             String category
     ) throws IOException {
 

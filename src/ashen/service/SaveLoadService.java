@@ -8,7 +8,7 @@ import java.io.*;
  * Service class responsible for saving and loading characters with Java serialization.
  */
 
-public class SaveLoadService {
+public class SaveLoadService implements CharacterPersistenceService {
 
     /**
      * Saves a character to the selected file path.
@@ -19,6 +19,7 @@ public class SaveLoadService {
      * @throws IOException if saving fails
      */
 
+    @Override
     public void saveCharacter(GameCharacter character, String filePath) throws IOException {
         File saveFile = new File(filePath);
         File parentFolder = saveFile.getParentFile();
@@ -41,6 +42,7 @@ public class SaveLoadService {
      * @throws ClassNotFoundException if the serialized class cannot be found
      */
 
+    @Override
     public GameCharacter loadCharacter(String filePath) throws IOException, ClassNotFoundException {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filePath))) {
             return (GameCharacter) inputStream.readObject();

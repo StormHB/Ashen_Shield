@@ -1,6 +1,7 @@
 package ashen.service;
 
 import ashen.model.GameCharacter;
+import ashen.model.Difficulty;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,12 +12,7 @@ import java.util.List;
  * Service class for saving and loading high scores from a text file.
  * High scores are stored as simple semicolon-separated text records.
  */
-public class HighScoreService {
-
-    public static final String NORMAL = "NORMAL";
-    public static final String HARDCORE_HP = "HARDCORE_HP";
-    public static final String HARDCORE_DAMAGE = "HARDCORE_DAMAGE";
-    public static final String HARDCORE_FULL = "HARDCORE_FULL";
+public class HighScoreService implements HighScoreProvider {
 
     private static final String HIGH_SCORE_FILE = "DATA/highscores.txt";
 
@@ -29,6 +25,7 @@ public class HighScoreService {
      * @throws IOException if the high score file cannot be written
      */
 
+    @Override
     public void saveHighScore(GameCharacter character) throws IOException {
         File file = new File(HIGH_SCORE_FILE);
         File parentFolder = file.getParentFile();
@@ -60,6 +57,7 @@ public class HighScoreService {
      * @throws IOException if the high score file cannot be read
      */
 
+    @Override
     public String loadHighScoresForCategory(String category) throws IOException {
         File file = new File(HIGH_SCORE_FILE);
 
@@ -111,11 +109,15 @@ public class HighScoreService {
             }
         }
 
-        scores.sort(
-                Comparator.comparingInt(
-                        score -> -Integer.parseInt(score[2])
-                )
-        );
+        scores.sort(new Comparator<String[]>() {
+            @Override
+            public int compare(String[] firstScore, String[] secondScore) {
+                int firstHp = Integer.parseInt(firstScore[2]);
+                int secondHp = Integer.parseInt(secondScore[2]);
+
+                return Integer.compare(secondHp, firstHp);
+            }
+        });
 
         if (scores.isEmpty()) {
             return "No high scores saved in this category yet.";
@@ -148,13 +150,18 @@ public class HighScoreService {
      * @return formatted category name
      */
 
+    @Override
     public String getCategoryDisplayName(String category) {
-        return switch (category) {
-            case HARDCORE_HP -> "Hardcore - Enemy HP";
-            case HARDCORE_DAMAGE -> "Hardcore - Enemy Damage";
-            case HARDCORE_FULL -> "Hardcore - Enemy HP + Damage";
-            default -> "Normal";
-        };
+        switch (category) {
+            case HARDCORE_HP:
+                return "Hardcore - Enemy HP";
+            case HARDCORE_DAMAGE:
+                return "Hardcore - Enemy Damage";
+            case HARDCORE_FULL:
+                return "Hardcore - Enemy HP + Damage";
+            default:
+                return "Normal";
+        }
     }
 
     /**
@@ -166,7 +173,7 @@ public class HighScoreService {
      */
 
     private String getScoreCategory(GameCharacter character) {
-        if (!"Hardcore".equals(character.getDifficulty())) {
+        if (character.getDifficultyType() != Difficulty.HARDCORE) {
             return NORMAL;
         }
 
