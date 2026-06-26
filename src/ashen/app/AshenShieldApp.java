@@ -18,9 +18,12 @@ public class AshenShieldApp {
      */
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainFrame mainFrame = new MainFrame();
-            mainFrame.setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.setVisible(true);
+            }
         });
     }
 }

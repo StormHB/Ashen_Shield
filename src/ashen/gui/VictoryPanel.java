@@ -1,12 +1,17 @@
 package ashen.gui;
 
+import ashen.gui.event.VictoryPanelListener;
+import ashen.gui.event.VictoryShortcutListener;
 import ashen.model.GameCharacter;
-import ashen.service.SaveLoadService;
-import ashen.service.HighScoreService;
+import ashen.service.CharacterPersistenceService;
+import ashen.service.HighScoreProvider;
+import ashen.service.RestService;
+import ashen.service.ShortRestResult;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 /**
@@ -14,35 +19,42 @@ import java.io.IOException;
  * Handles short rest, moving to the next battle, saving and campaign completion.
  */
 
-public class VictoryPanel extends JPanel {
+public class VictoryPanel extends JPanel implements VictoryShortcutListener {
 
-    private MainFrame mainFrame;
+    private VictoryPanelListener listener;
+    private JRootPane shortcutRootPane;
     private GameCharacter character;
     private int defeatedEnemyIndex;
     private String defeatedEnemyName;
-    private SaveLoadService saveLoadService;
-    private HighScoreService highScoreService;
+    private CharacterPersistenceService saveLoadService;
+    private HighScoreProvider highScoreService;
     private JButton saveScoreButton;
 
     private JButton shortRestButton;
+    private JButton nextBattleButton;
 
     /**
      * Creates the victory panel after a completed battle.
      *
-     * @param mainFrame main frame used for navigation
+     * @param listener listener used for navigation
+     * @param shortcutRootPane root pane used for keyboard shortcuts
      * @param character victorious character
      * @param defeatedEnemyIndex index of the defeated enemy
      * @param defeatedEnemyName name of the defeated enemy
+     * @param saveLoadService service used for saving characters
+     * @param highScoreService service used for saving high scores
      */
 
-    public VictoryPanel(MainFrame mainFrame, GameCharacter character,
-                        int defeatedEnemyIndex, String defeatedEnemyName) {
-        this.mainFrame = mainFrame;
+    public VictoryPanel(VictoryPanelListener listener, JRootPane shortcutRootPane, GameCharacter character,
+                        int defeatedEnemyIndex, String defeatedEnemyName,
+                        CharacterPersistenceService saveLoadService, HighScoreProvider highScoreService) {
+        this.listener = listener;
+        this.shortcutRootPane = shortcutRootPane;
         this.character = character;
         this.defeatedEnemyIndex = defeatedEnemyIndex;
         this.defeatedEnemyName = defeatedEnemyName;
-        this.saveLoadService = new SaveLoadService();
-        this.highScoreService = new HighScoreService();
+        this.saveLoadService = saveLoadService;
+        this.highScoreService = highScoreService;
 
         layoutComponents();
     }
@@ -86,22 +98,52 @@ public class VictoryPanel extends JPanel {
         );
 
         shortRestButton = GuiUtils.createMenuButton("Short Rest (R)");
-        JButton nextBattleButton = GuiUtils.createMenuButton("Next Battle (N)");
+        nextBattleButton = GuiUtils.createMenuButton("Next Battle (N)");
         JButton mainMenuButton = GuiUtils.createMenuButton("Main Menu");
         JButton saveButton = GuiUtils.createMenuButton("Save Character");
         saveScoreButton = GuiUtils.createMenuButton("Save Score");
         JButton exitButton = GuiUtils.createMenuButton("Exit");
 
         if (!campaignCompleted) {
-            setupVictoryShortcuts(shortRestButton, nextBattleButton);
-            shortRestButton.addActionListener(e -> shortRest(hpLabel));
-            nextBattleButton.addActionListener(e -> mainFrame.showBattle(character, defeatedEnemyIndex + 1));
+            setupVictoryShortcuts();
+            shortRestButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    shortRest(hpLabel);
+                }
+            });
+            nextBattleButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.onNextBattleRequested(character, defeatedEnemyIndex + 1);
+                }
+            });
         }
 
-        mainMenuButton.addActionListener(e -> mainFrame.showMainMenu());
-        saveButton.addActionListener(e -> saveCharacter());
-        saveScoreButton.addActionListener(e -> saveHighScore());
-        exitButton.addActionListener(e -> System.exit(0));
+        mainMenuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onMainMenuRequested();
+            }
+        });
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveCharacter();
+            }
+        });
+        saveScoreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveHighScore();
+            }
+        });
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onExitRequested();
+            }
+        });
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -159,37 +201,16 @@ public class VictoryPanel extends JPanel {
      */
 
     private void shortRest(JLabel hpLabel) {
+        ShortRestResult restResult = RestService.shortRest(character);
 
-        int hpBefore = character.getCurrentHp();
-
-        int missingHp = character.getMaxHp() - character.getCurrentHp();
-        int healing = (missingHp + 1) / 2;
-
-        if (healing < 4 && missingHp > 0) {
-            healing = 4;
-        }
-
-        character.heal(healing);
-
-        int hpAfter = character.getCurrentHp();
-
-        hpLabel.setText("Current HP: " + hpAfter + "/" + character.getMaxHp());
+        hpLabel.setText("Current HP: " + restResult.getHpAfter() + "/" + character.getMaxHp());
         shortRestButton.setEnabled(false);
 
-        mainFrame.appendToCampaignBattleLog(
-                "\nShort Rest\n"
-                        + "Recovered "
-                        + (hpAfter - hpBefore)
-                        + " HP ("
-                        + hpBefore
-                        + " -> "
-                        + hpAfter
-                        + ")\n\n"
-        );
+        listener.onCampaignLogUpdated(restResult.toBattleLogEntry());
 
         JOptionPane.showMessageDialog(
                 this,
-                "Short Rest recovered " + (hpAfter - hpBefore) + " HP."
+                "Short Rest recovered " + restResult.getRecoveredHp() + " HP."
         );
     }
 
@@ -230,49 +251,23 @@ public class VictoryPanel extends JPanel {
     /**
      * Registers keyboard shortcuts for short rest and moving to the next battle.
      *
-     * @param shortRestButton button activated by the R shortcut
-     * @param nextBattleButton button activated by the N shortcut
      */
 
-    private void setupVictoryShortcuts(
-            JButton shortRestButton,
-            JButton nextBattleButton
-    ) {
+    private void setupVictoryShortcuts() {
+        VictoryShortcutInstaller.install(shortcutRootPane, this);
+    }
 
-        JRootPane rootPane = mainFrame.getRootPane();
+    @Override
+    public void onShortRestShortcut() {
+        if (shortRestButton.isEnabled()) {
+            shortRestButton.doClick();
+        }
+    }
 
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_R, 0),
-                "shortRest"
-        );
-
-        rootPane.getActionMap().put(
-                "shortRest",
-                new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (shortRestButton.isEnabled()) {
-                            shortRestButton.doClick();
-                        }
-                    }
-                }
-        );
-
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, 0),
-                "nextBattle"
-        );
-
-        rootPane.getActionMap().put(
-                "nextBattle",
-                new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (nextBattleButton.isEnabled()) {
-                            nextBattleButton.doClick();
-                        }
-                    }
-                }
-        );
+    @Override
+    public void onNextBattleShortcut() {
+        if (nextBattleButton.isEnabled()) {
+            nextBattleButton.doClick();
+        }
     }
 }

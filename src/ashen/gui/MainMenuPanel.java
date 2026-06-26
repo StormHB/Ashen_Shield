@@ -1,9 +1,11 @@
 package ashen.gui;
 
-import ashen.service.HighScoreService;
+import ashen.gui.event.MainMenuListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Main menu screen of the application.
@@ -13,16 +15,16 @@ import java.awt.*;
 
 public class MainMenuPanel extends JPanel {
 
-    private MainFrame mainFrame;
+    private MainMenuListener listener;
 
     /**
      * Creates the main menu panel.
      *
-     * @param mainFrame main frame used for navigation actions
+     * @param listener listener that handles navigation actions
      */
 
-    public MainMenuPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public MainMenuPanel(MainMenuListener listener) {
+        this.listener = listener;
         layoutComponents();
     }
 
@@ -52,10 +54,30 @@ public class MainMenuPanel extends JPanel {
         JButton highScoresButton = GuiUtils.createMenuButton("High Scores");
         JButton exitButton = GuiUtils.createMenuButton("Exit");
 
-        loadCharacterButton.addActionListener(e -> mainFrame.loadCharacter());
-        highScoresButton.addActionListener(e -> GuiUtils.showHighScores(this, new HighScoreService()));
-        newCharacterButton.addActionListener(e -> mainFrame.showCharacterCreation());
-        exitButton.addActionListener(e -> System.exit(0));
+        loadCharacterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onLoadCharacterRequested();
+            }
+        });
+        highScoresButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onHighScoresRequested(MainMenuPanel.this);
+            }
+        });
+        newCharacterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onNewCharacterRequested();
+            }
+        });
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onExitRequested();
+            }
+        });
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;

@@ -1,10 +1,13 @@
 package ashen.gui;
 
+import ashen.gui.event.DefeatPanelListener;
 import ashen.model.GameCharacter;
-import ashen.service.SaveLoadService;
+import ashen.service.CharacterPersistenceService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Screen shown when the player character is defeated.
@@ -13,21 +16,22 @@ import java.awt.*;
 
 public class DefeatPanel extends JPanel {
 
-    private MainFrame mainFrame;
+    private DefeatPanelListener listener;
     private GameCharacter character;
-    private SaveLoadService saveLoadService;
+    private CharacterPersistenceService saveLoadService;
 
     /**
      * Creates the defeat panel for the given character.
      *
-     * @param mainFrame main frame used for navigation
+     * @param listener listener used for navigation
      * @param character defeated character
+     * @param saveLoadService service used for saving characters
      */
 
-    public DefeatPanel(MainFrame mainFrame, GameCharacter character) {
-        this.mainFrame = mainFrame;
+    public DefeatPanel(DefeatPanelListener listener, GameCharacter character, CharacterPersistenceService saveLoadService) {
+        this.listener = listener;
         this.character = character;
-        this.saveLoadService = new SaveLoadService();
+        this.saveLoadService = saveLoadService;
 
         layoutComponents();
     }
@@ -57,9 +61,24 @@ public class DefeatPanel extends JPanel {
         JButton saveButton = GuiUtils.createMenuButton("Save Character");
         JButton exitButton = GuiUtils.createMenuButton("Exit");
 
-        mainMenuButton.addActionListener(e -> mainFrame.showMainMenu());
-        saveButton.addActionListener(e -> saveCharacter());
-        exitButton.addActionListener(e -> System.exit(0));
+        mainMenuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onMainMenuRequested();
+            }
+        });
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveCharacter();
+            }
+        });
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.onExitRequested();
+            }
+        });
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;

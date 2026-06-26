@@ -1,35 +1,45 @@
 package ashen.gui;
 
+import ashen.gui.event.BattlePanelListener;
+import ashen.gui.event.CharacterCreationListener;
+import ashen.gui.event.DefeatPanelListener;
+import ashen.gui.event.MainMenuListener;
+import ashen.gui.event.VictoryPanelListener;
 import ashen.model.GameCharacter;
+import ashen.service.CharacterPersistenceService;
+import ashen.service.HighScoreProvider;
+import ashen.service.HighScoreService;
 import ashen.service.SaveLoadService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
 
 /**
  * Main application window that controls panel navigation.
- * Uses a CardLayout to switch between the main menu, character creation,
- * battle, victory and defeat screens.
  */
 
-public class MainFrame extends JFrame {
-
-    private CardLayout cardLayout;
-    private Container contentPane;
+public class MainFrame extends JFrame implements MainMenuListener, CharacterCreationListener,
+        BattlePanelListener, VictoryPanelListener, DefeatPanelListener {
 
     private StringBuilder campaignBattleLog = new StringBuilder();
+    private final CharacterPersistenceService saveLoadService;
+    private final HighScoreProvider highScoreService;
 
     /**
      * Creates the main frame and initializes the application layout.
      */
 
     public MainFrame() {
+        this(new SaveLoadService(), new HighScoreService());
+    }
+
+    MainFrame(CharacterPersistenceService saveLoadService, HighScoreProvider highScoreService) {
         super("Ashen Shield");
 
+        this.saveLoadService = saveLoadService;
+        this.highScoreService = highScoreService;
+
         initFrame();
-        initLayout();
         showMainMenu();
     }
 
@@ -37,15 +47,6 @@ public class MainFrame extends JFrame {
         setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-    }
-
-    private void initLayout() {
-        cardLayout = new CardLayout();
-        contentPane = getContentPane();
-        contentPane.setLayout(cardLayout);
-
-        contentPane.add(new MainMenuPanel(this), "mainMenu");
-        contentPane.add(new CharacterCreationPanel(this), "characterCreation");
     }
 
     /**
@@ -57,7 +58,7 @@ public class MainFrame extends JFrame {
     public void showDefeatPanel(GameCharacter character) {
         clearShortcuts();
         clearMenuBar();
-        setContentPane(new DefeatPanel(this, character));
+        setContentPane(new DefeatPanel(this, character, saveLoadService));
         revalidate();
         repaint();
     }
@@ -106,7 +107,17 @@ public class MainFrame extends JFrame {
 
     public void showBattle(GameCharacter character, int enemyIndex) {
         clearShortcuts();
-        setContentPane(new BattlePanel(this, character, enemyIndex));
+        BattlePanel battlePanel = new BattlePanel(
+                this,
+                getRootPane(),
+                character,
+                enemyIndex,
+                saveLoadService,
+                highScoreService
+        );
+
+        setJMenuBar(battlePanel.createBattleMenuBar());
+        setContentPane(battlePanel);
         revalidate();
         repaint();
     }
@@ -116,37 +127,10 @@ public class MainFrame extends JFrame {
      */
 
     public void loadCharacter() {
-        JFileChooser fileChooser = new JFileChooser("DATA");
-        fileChooser.setAcceptAllFileFilterUsed(true);
+        GameCharacter character = CharacterLoadDialog.show(this, saveLoadService);
 
-        fileChooser.setFileFilter(
-                new javax.swing.filechooser.FileNameExtensionFilter(
-                        "Character Saves (*.ser)",
-                        "ser"
-                )
-        );
-
-        int result = fileChooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-
-            try {
-                SaveLoadService saveLoadService = new SaveLoadService();
-                GameCharacter character = saveLoadService.loadCharacter(selectedFile.getPath());
-
-                character.restoreFullHp();
-
-                showBattle(character);
-
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Failed to load character.",
-                        "Load Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
+        if (character != null) {
+            showBattle(character);
         }
     }
 
@@ -161,9 +145,77 @@ public class MainFrame extends JFrame {
     public void showVictoryPanel(GameCharacter character, int defeatedEnemyIndex, String defeatedEnemyName) {
         clearShortcuts();
         clearMenuBar();
-        setContentPane(new VictoryPanel(this, character, defeatedEnemyIndex, defeatedEnemyName));
+        setContentPane(new VictoryPanel(
+                this,
+                getRootPane(),
+                character,
+                defeatedEnemyIndex,
+                defeatedEnemyName,
+                saveLoadService,
+                highScoreService
+        ));
         revalidate();
         repaint();
+    }
+
+    @Override
+    public void onNewCharacterRequested() {
+        showCharacterCreation();
+    }
+
+    @Override
+    public void onLoadCharacterRequested() {
+        loadCharacter();
+    }
+
+    @Override
+    public void onHighScoresRequested(Component parent) {
+        GuiUtils.showHighScores(parent, highScoreService);
+    }
+
+    @Override
+    public void onMainMenuRequested() {
+        showMainMenu();
+    }
+
+    @Override
+    public void onExitRequested() {
+        System.exit(0);
+    }
+
+    @Override
+    public void onCharacterCreationCancelled() {
+        showMainMenu();
+    }
+
+    @Override
+    public void onCharacterCreated(GameCharacter character) {
+        showBattle(character);
+    }
+
+    @Override
+    public void onBattleWon(GameCharacter character, int defeatedEnemyIndex, String defeatedEnemyName) {
+        showVictoryPanel(character, defeatedEnemyIndex, defeatedEnemyName);
+    }
+
+    @Override
+    public void onPlayerDefeated(GameCharacter character) {
+        showDefeatPanel(character);
+    }
+
+    @Override
+    public void onBattleLogCompleted(String battleLog) {
+        appendToCampaignBattleLog(battleLog);
+    }
+
+    @Override
+    public void onNextBattleRequested(GameCharacter character, int nextEnemyIndex) {
+        showBattle(character, nextEnemyIndex);
+    }
+
+    @Override
+    public void onCampaignLogUpdated(String logEntry) {
+        appendToCampaignBattleLog(logEntry);
     }
 
     /**
