@@ -56,6 +56,22 @@ public class GameCharacter implements Serializable {
         this.currentHp = this.maxHp;
     }
 
+    public GameCharacter(String name, Race race, CharacterClass characterClass,
+                         Stats stats, Weapon weapon, Armor armor, Difficulty difficulty,
+                         boolean hardcoreHpBonus, boolean hardcoreDamageBonus) {
+        this(
+                name,
+                race == null ? Race.UNKNOWN.getDisplayName() : race.getDisplayName(),
+                characterClass == null ? CharacterClass.UNKNOWN.getDisplayName() : characterClass.getDisplayName(),
+                stats,
+                weapon == null ? Weapon.UNKNOWN.getDisplayName() : weapon.getDisplayName(),
+                armor == null ? Armor.UNKNOWN.getDisplayName() : armor.getDisplayName(),
+                difficulty == null ? Difficulty.NORMAL.getDisplayName() : difficulty.getDisplayName(),
+                hardcoreHpBonus,
+                hardcoreDamageBonus
+        );
+    }
+
     public String getName() {
         return name;
     }
@@ -64,8 +80,16 @@ public class GameCharacter implements Serializable {
         return race;
     }
 
+    public Race getRaceType() {
+        return Race.fromDisplayName(race);
+    }
+
     public String getCharacterClass() {
         return characterClass;
+    }
+
+    public CharacterClass getCharacterClassType() {
+        return CharacterClass.fromDisplayName(characterClass);
     }
 
     public Stats getStats() {
@@ -76,8 +100,16 @@ public class GameCharacter implements Serializable {
         return weapon;
     }
 
+    public Weapon getWeaponType() {
+        return Weapon.fromDisplayName(weapon);
+    }
+
     public String getArmor() {
         return armor;
+    }
+
+    public Armor getArmorType() {
+        return Armor.fromDisplayName(armor);
     }
 
     public int getMaxHp() {
@@ -90,6 +122,10 @@ public class GameCharacter implements Serializable {
 
     public String getDifficulty() {
         return difficulty;
+    }
+
+    public Difficulty getDifficultyType() {
+        return Difficulty.fromDisplayName(difficulty);
     }
 
     /**
