@@ -11,6 +11,12 @@ public final class CampaignEnemyFactory {
     private CampaignEnemyFactory() {
     }
 
+    /**
+     * Creates campaign enemies using the character's difficulty settings.
+     *
+     * @param character player character whose difficulty modifiers are applied
+     * @return ordered enemy array for the campaign
+     */
     public static Enemy[] createEnemies(GameCharacter character) {
         return new Enemy[]{
                 new Enemy("Goblin", BattleRules.applyDifficultyHp(character, 10), 12, 2),

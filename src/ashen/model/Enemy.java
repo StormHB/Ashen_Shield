@@ -34,22 +34,47 @@ public class Enemy implements Serializable {
         this.attackBonus = attackBonus;
     }
 
+    /**
+     * Returns the enemy name.
+     *
+     * @return enemy name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the enemy maximum HP.
+     *
+     * @return maximum HP
+     */
     public int getMaxHp() {
         return maxHp;
     }
 
+    /**
+     * Returns the enemy current HP.
+     *
+     * @return current HP
+     */
     public int getCurrentHp() {
         return currentHp;
     }
 
+    /**
+     * Returns the armor class used for hit checks.
+     *
+     * @return armor class
+     */
     public int getArmorClass() {
         return armorClass;
     }
 
+    /**
+     * Returns the enemy attack bonus.
+     *
+     * @return attack bonus
+     */
     public int getAttackBonus() {
         return attackBonus;
     }

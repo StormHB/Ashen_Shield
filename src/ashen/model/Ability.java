@@ -17,6 +17,11 @@ public enum Ability {
         this.abbreviation = abbreviation;
     }
 
+    /**
+     * Returns the short label displayed for this ability score.
+     *
+     * @return three-letter ability abbreviation
+     */
     public String getAbbreviation() {
         return abbreviation;
     }

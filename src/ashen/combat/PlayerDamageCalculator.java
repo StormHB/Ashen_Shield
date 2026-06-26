@@ -10,6 +10,13 @@ public final class PlayerDamageCalculator {
     private PlayerDamageCalculator() {
     }
 
+    /**
+     * Rolls player weapon damage and prepares battle log text for the roll.
+     *
+     * @param character attacking character
+     * @param diceRoller dice roller used for random values
+     * @return damage result with formula text
+     */
     public static DamageRoll rollDamage(GameCharacter character, DiceRoller diceRoller) {
         int modifier = BattleRules.calculateAbilityModifierForAttack(character);
         String statName = BattleRules.getMainStatName(character);

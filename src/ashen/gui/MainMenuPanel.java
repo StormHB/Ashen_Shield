@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 /**
  * Main menu screen of the application.
  * Provides actions for creating a new character, loading a saved character
- * and exiting the program.
+ * viewing high scores and exiting the program.
  */
 
 public class MainMenuPanel extends JPanel {

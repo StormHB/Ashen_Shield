@@ -27,20 +27,38 @@ public class StatAllocationPanel extends JPanel {
     private Stats raceBonuses = new Stats(0, 0, 0, 0, 0, 0);
     private JLabel pointsRemainingLabel;
 
+    /**
+     * Creates the stat allocation panel and initializes its controls.
+     */
     public StatAllocationPanel() {
         layoutComponents();
     }
 
+    /**
+     * Returns unspent stat allocation points.
+     *
+     * @return remaining allocation points
+     */
     public int getPointsRemaining() {
         return statAllocation.getPointsRemaining();
     }
 
+    /**
+     * Applies race bonuses and refreshes displayed stat values.
+     *
+     * @param raceBonuses race bonus values
+     */
     public void applyRaceBonuses(Stats raceBonuses) {
         this.raceBonuses = raceBonuses;
         statAllocation.applyRaceBonuses(raceBonuses);
         updateStatLabels();
     }
 
+    /**
+     * Converts the currently displayed allocation into final stats.
+     *
+     * @return current stat allocation values
+     */
     public Stats toStats() {
         return statAllocation.toStats();
     }

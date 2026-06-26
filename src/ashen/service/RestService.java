@@ -10,6 +10,12 @@ public final class RestService {
     private RestService() {
     }
 
+    /**
+     * Restores part of the character's missing HP.
+     *
+     * @param character character that takes a short rest
+     * @return result containing HP before and after the rest
+     */
     public static ShortRestResult shortRest(GameCharacter character) {
         int hpBefore = character.getCurrentHp();
         int missingHp = character.getMaxHp() - character.getCurrentHp();

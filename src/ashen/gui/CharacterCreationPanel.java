@@ -288,7 +288,7 @@ public class CharacterCreationPanel extends JPanel {
     /**
      * Adds weapon options to the weapon combo box.
      *
-     * @param weapons weapon names to add
+     * @param weapons weapon values to add
      */
 
     private void addWeapons(Weapon... weapons) {
@@ -300,7 +300,7 @@ public class CharacterCreationPanel extends JPanel {
     /**
      * Adds armor options to the armor combo box.
      *
-     * @param armorList armor names to add
+     * @param armorList armor values to add
      */
 
     private void addArmor(Armor... armorList) {

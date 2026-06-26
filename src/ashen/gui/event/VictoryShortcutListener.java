@@ -7,7 +7,13 @@ import java.util.EventListener;
  */
 public interface VictoryShortcutListener extends EventListener {
 
+    /**
+     * Handles the short rest shortcut.
+     */
     void onShortRestShortcut();
 
+    /**
+     * Handles the next battle shortcut.
+     */
     void onNextBattleShortcut();
 }

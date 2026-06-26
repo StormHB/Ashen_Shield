@@ -25,6 +25,12 @@ public enum Weapon {
         this.tooltip = tooltip;
     }
 
+    /**
+     * Finds a weapon by the text stored in save files or shown in the GUI.
+     *
+     * @param displayName display name to search for
+     * @return matching weapon, or {@link #UNKNOWN} when no match exists
+     */
     public static Weapon fromDisplayName(String displayName) {
         for (Weapon weapon : values()) {
             if (weapon.displayName.equals(displayName)) {
@@ -35,22 +41,47 @@ public enum Weapon {
         return UNKNOWN;
     }
 
+    /**
+     * Returns the die size used for this weapon's base damage roll.
+     *
+     * @return damage die size
+     */
     public int getDamageDice() {
         return damageDice;
     }
 
+    /**
+     * Returns a compact description of this weapon's damage formula.
+     *
+     * @return damage description shown on character sheets
+     */
     public String getDamageDescription() {
         return damageDescription;
     }
 
+    /**
+     * Returns text shown as a tooltip in the weapon combo box.
+     *
+     * @return weapon tooltip text, or null when no tooltip is available
+     */
     public String getTooltip() {
         return tooltip;
     }
 
+    /**
+     * Returns the user-facing weapon name.
+     *
+     * @return display name used in GUI and save files
+     */
     public String getDisplayName() {
         return displayName;
     }
 
+    /**
+     * Returns the display name so combo boxes show readable weapon names.
+     *
+     * @return user-facing weapon name
+     */
     @Override
     public String toString() {
         return displayName;

@@ -14,6 +14,12 @@ public final class BattleShortcutInstaller {
     private BattleShortcutInstaller() {
     }
 
+    /**
+     * Registers all keyboard shortcuts used on the battle screen.
+     *
+     * @param rootPane root pane that receives key bindings
+     * @param listener listener that receives shortcut events
+     */
     public static void install(
             JRootPane rootPane,
             BattleShortcutListener listener

@@ -56,6 +56,19 @@ public class GameCharacter implements Serializable {
         this.currentHp = this.maxHp;
     }
 
+    /**
+     * Creates a new playable character from enum selections.
+     *
+     * @param name character name
+     * @param race selected race
+     * @param characterClass selected class
+     * @param stats ability scores
+     * @param weapon selected weapon
+     * @param armor selected armor
+     * @param difficulty selected difficulty mode
+     * @param hardcoreHpBonus true if hardcore HP modifier is enabled
+     * @param hardcoreDamageBonus true if hardcore damage modifier is enabled
+     */
     public GameCharacter(String name, Race race, CharacterClass characterClass,
                          Stats stats, Weapon weapon, Armor armor, Difficulty difficulty,
                          boolean hardcoreHpBonus, boolean hardcoreDamageBonus) {
@@ -72,58 +85,128 @@ public class GameCharacter implements Serializable {
         );
     }
 
+    /**
+     * Returns the character name.
+     *
+     * @return character name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the race name as stored for serialization compatibility.
+     *
+     * @return race display name
+     */
     public String getRace() {
         return race;
     }
 
+    /**
+     * Returns the race as an enum value.
+     *
+     * @return race enum matching the stored display name
+     */
     public Race getRaceType() {
         return Race.fromDisplayName(race);
     }
 
+    /**
+     * Returns the class name as stored for serialization compatibility.
+     *
+     * @return character class display name
+     */
     public String getCharacterClass() {
         return characterClass;
     }
 
+    /**
+     * Returns the character class as an enum value.
+     *
+     * @return class enum matching the stored display name
+     */
     public CharacterClass getCharacterClassType() {
         return CharacterClass.fromDisplayName(characterClass);
     }
 
+    /**
+     * Returns the current ability scores.
+     *
+     * @return character stats
+     */
     public Stats getStats() {
         return stats;
     }
 
+    /**
+     * Returns the weapon name as stored for serialization compatibility.
+     *
+     * @return weapon display name
+     */
     public String getWeapon() {
         return weapon;
     }
 
+    /**
+     * Returns the equipped weapon as an enum value.
+     *
+     * @return weapon enum matching the stored display name
+     */
     public Weapon getWeaponType() {
         return Weapon.fromDisplayName(weapon);
     }
 
+    /**
+     * Returns the armor name as stored for serialization compatibility.
+     *
+     * @return armor display name
+     */
     public String getArmor() {
         return armor;
     }
 
+    /**
+     * Returns the equipped armor as an enum value.
+     *
+     * @return armor enum matching the stored display name
+     */
     public Armor getArmorType() {
         return Armor.fromDisplayName(armor);
     }
 
+    /**
+     * Returns the maximum hit points.
+     *
+     * @return maximum HP
+     */
     public int getMaxHp() {
         return maxHp;
     }
 
+    /**
+     * Returns the current hit points.
+     *
+     * @return current HP
+     */
     public int getCurrentHp() {
         return currentHp;
     }
 
+    /**
+     * Returns the difficulty name as stored for serialization compatibility.
+     *
+     * @return difficulty display name
+     */
     public String getDifficulty() {
         return difficulty;
     }
 
+    /**
+     * Returns the difficulty as an enum value.
+     *
+     * @return difficulty enum matching the stored display name
+     */
     public Difficulty getDifficultyType() {
         return Difficulty.fromDisplayName(difficulty);
     }
@@ -174,10 +257,20 @@ public class GameCharacter implements Serializable {
         currentHp = maxHp;
     }
 
+    /**
+     * Checks whether hardcore mode increases enemy HP.
+     *
+     * @return true if the enemy HP modifier is enabled
+     */
     public boolean hasHardcoreHpBonus() {
         return hardcoreHpBonus;
     }
 
+    /**
+     * Checks whether hardcore mode increases enemy damage.
+     *
+     * @return true if the enemy damage modifier is enabled
+     */
     public boolean hasHardcoreDamageBonus() {
         return hardcoreDamageBonus;
     }

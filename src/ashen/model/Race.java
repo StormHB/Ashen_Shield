@@ -48,10 +48,21 @@ public enum Race {
         this.bonusDescription = bonusDescription;
     }
 
+    /**
+     * Returns only races that can be selected during character creation.
+     *
+     * @return copy of the playable race array
+     */
     public static Race[] playableValues() {
         return PLAYABLE_VALUES.clone();
     }
 
+    /**
+     * Finds a race by the text stored in save files or shown in the GUI.
+     *
+     * @param displayName display name to search for
+     * @return matching race, or {@link #UNKNOWN} when no match exists
+     */
     public static Race fromDisplayName(String displayName) {
         for (Race race : values()) {
             if (race.displayName.equals(displayName)) {
@@ -62,6 +73,11 @@ public enum Race {
         return UNKNOWN;
     }
 
+    /**
+     * Creates the ability score bonuses granted by this race.
+     *
+     * @return stat object containing only race bonus values
+     */
     public Stats createBonusStats() {
         return new Stats(
                 strengthBonus,
@@ -73,14 +89,29 @@ public enum Race {
         );
     }
 
+    /**
+     * Returns a compact user-facing description of race bonuses.
+     *
+     * @return race bonus description
+     */
     public String getBonusDescription() {
         return bonusDescription;
     }
 
+    /**
+     * Returns the user-facing race name.
+     *
+     * @return display name used in GUI and save files
+     */
     public String getDisplayName() {
         return displayName;
     }
 
+    /**
+     * Returns the display name so combo boxes show readable race names.
+     *
+     * @return user-facing race name
+     */
     @Override
     public String toString() {
         return displayName;

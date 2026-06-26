@@ -9,7 +9,15 @@ import java.util.EventListener;
  */
 public interface CharacterCreationListener extends EventListener {
 
+    /**
+     * Handles cancellation of character creation.
+     */
     void onCharacterCreationCancelled();
 
+    /**
+     * Handles a newly created character.
+     *
+     * @param character character created from the form
+     */
     void onCharacterCreated(GameCharacter character);
 }

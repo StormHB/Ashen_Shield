@@ -39,26 +39,56 @@ public class Stats implements Serializable {
         this.luck = luck;
     }
 
+    /**
+     * Returns the strength score.
+     *
+     * @return strength value
+     */
     public int getStrength() {
         return strength;
     }
 
+    /**
+     * Returns the dexterity score.
+     *
+     * @return dexterity value
+     */
     public int getDexterity() {
         return dexterity;
     }
 
+    /**
+     * Returns the constitution score.
+     *
+     * @return constitution value
+     */
     public int getConstitution() {
         return constitution;
     }
 
+    /**
+     * Returns the intelligence score.
+     *
+     * @return intelligence value
+     */
     public int getIntelligence() {
         return intelligence;
     }
 
+    /**
+     * Returns the wisdom score.
+     *
+     * @return wisdom value
+     */
     public int getWisdom() {
         return wisdom;
     }
 
+    /**
+     * Returns the luck score.
+     *
+     * @return luck value
+     */
     public int getLuck() {
         return luck;
     }

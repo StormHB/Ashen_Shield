@@ -19,6 +19,12 @@ public final class BattleMenuFactory {
     private BattleMenuFactory() {
     }
 
+    /**
+     * Creates the menu bar used while the battle screen is active.
+     *
+     * @param listener listener that receives selected menu actions
+     * @return configured battle menu bar
+     */
     public static JMenuBar createBattleMenuBar(BattleMenuListener listener) {
         JMenuBar menuBar = new JMenuBar();
 

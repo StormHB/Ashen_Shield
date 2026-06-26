@@ -15,6 +15,12 @@ public final class VictoryShortcutInstaller {
     private VictoryShortcutInstaller() {
     }
 
+    /**
+     * Registers all keyboard shortcuts used on the victory screen.
+     *
+     * @param rootPane root pane that receives key bindings
+     * @param listener listener that receives shortcut events
+     */
     public static void install(JRootPane rootPane, VictoryShortcutListener listener) {
         register(rootPane, KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "shortRest", new Runnable() {
             @Override

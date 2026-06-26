@@ -14,14 +14,30 @@ public final class CharacterCreationRules {
     private CharacterCreationRules() {
     }
 
+    /**
+     * Returns races available to the player.
+     *
+     * @return selectable race values
+     */
     public static Race[] getRaces() {
         return Race.playableValues();
     }
 
+    /**
+     * Returns character classes available to the player.
+     *
+     * @return selectable class values
+     */
     public static CharacterClass[] getCharacterClasses() {
         return CharacterClass.playableValues();
     }
 
+    /**
+     * Returns stat bonuses granted by the selected race.
+     *
+     * @param race selected race
+     * @return stat object containing race bonus values
+     */
     public static Stats getRaceBonuses(Race race) {
         if (race == null) {
             return Race.UNKNOWN.createBonusStats();
@@ -30,6 +46,12 @@ public final class CharacterCreationRules {
         return race.createBonusStats();
     }
 
+    /**
+     * Returns text describing the selected race bonuses.
+     *
+     * @param race selected race
+     * @return display text for race bonuses
+     */
     public static String getRaceBonusDescription(Race race) {
         if (race == null) {
             return Race.UNKNOWN.getBonusDescription();
@@ -38,6 +60,12 @@ public final class CharacterCreationRules {
         return race.getBonusDescription();
     }
 
+    /**
+     * Returns weapons available to a selected class.
+     *
+     * @param characterClass selected class
+     * @return weapon choices for that class
+     */
     public static Weapon[] getWeaponsForClass(CharacterClass characterClass) {
         if (characterClass == CharacterClass.FIGHTER) {
             return new Weapon[]{Weapon.LONGSWORD_SHIELD, Weapon.GREATSWORD};
@@ -62,6 +90,12 @@ public final class CharacterCreationRules {
         return new Weapon[0];
     }
 
+    /**
+     * Returns armor available to a selected class.
+     *
+     * @param characterClass selected class
+     * @return armor choices for that class
+     */
     public static Armor[] getArmorForClass(CharacterClass characterClass) {
         if (characterClass == CharacterClass.FIGHTER) {
             return new Armor[]{Armor.CHAIN_MAIL, Armor.PLATE_ARMOR};
@@ -86,6 +120,14 @@ public final class CharacterCreationRules {
         return new Armor[0];
     }
 
+    /**
+     * Applies class and equipment stat bonuses to finalized base stats.
+     *
+     * @param characterClass selected class
+     * @param armor selected armor
+     * @param stats stats after point allocation and race bonuses
+     * @return new stats object with equipment bonuses applied
+     */
     public static Stats applyEquipmentBonuses(CharacterClass characterClass, Armor armor, Stats stats) {
         int strength = stats.getStrength();
         int dexterity = stats.getDexterity();
@@ -119,6 +161,12 @@ public final class CharacterCreationRules {
         return new Stats(strength, dexterity, constitution, intelligence, wisdom, luck);
     }
 
+    /**
+     * Returns the class description shown in the character creation panel.
+     *
+     * @param characterClass selected class
+     * @return description text for the selected class
+     */
     public static String getClassDescription(CharacterClass characterClass) {
         if (characterClass == CharacterClass.FIGHTER) {
             return "Primary Stat: Strength\n" +
@@ -160,6 +208,12 @@ public final class CharacterCreationRules {
         return "";
     }
 
+    /**
+     * Returns tooltip text for a selected weapon.
+     *
+     * @param weapon selected weapon
+     * @return weapon tooltip text, or null if no weapon is selected
+     */
     public static String getWeaponTooltip(Weapon weapon) {
         if (weapon == null) {
             return null;
@@ -168,6 +222,12 @@ public final class CharacterCreationRules {
         return weapon.getTooltip();
     }
 
+    /**
+     * Returns tooltip text for a selected armor item.
+     *
+     * @param armor selected armor
+     * @return armor tooltip text, or null if no armor is selected
+     */
     public static String getArmorTooltip(Armor armor) {
         if (armor == null) {
             return null;

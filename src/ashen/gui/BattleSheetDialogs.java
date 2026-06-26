@@ -17,6 +17,12 @@ public final class BattleSheetDialogs {
     private BattleSheetDialogs() {
     }
 
+    /**
+     * Shows a dialog with detailed character combat information.
+     *
+     * @param parent component used as the dialog parent
+     * @param character character to display
+     */
     public static void showCharacterSheet(Component parent, GameCharacter character) {
         JTextArea sheetArea = createSheetTextArea();
 
@@ -57,6 +63,12 @@ public final class BattleSheetDialogs {
         );
     }
 
+    /**
+     * Shows a dialog with detailed enemy combat information.
+     *
+     * @param parent component used as the dialog parent
+     * @param enemy enemy to display
+     */
     public static void showEnemySheet(Component parent, Enemy enemy) {
         JTextArea sheetArea = createSheetTextArea();
 

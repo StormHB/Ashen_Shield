@@ -25,10 +25,21 @@ public enum CharacterClass {
         this.displayName = displayName;
     }
 
+    /**
+     * Returns only classes that can be selected during character creation.
+     *
+     * @return copy of the playable class array
+     */
     public static CharacterClass[] playableValues() {
         return PLAYABLE_VALUES.clone();
     }
 
+    /**
+     * Finds a character class by the text stored in save files or shown in the GUI.
+     *
+     * @param displayName display name to search for
+     * @return matching character class, or {@link #UNKNOWN} when no match exists
+     */
     public static CharacterClass fromDisplayName(String displayName) {
         for (CharacterClass characterClass : values()) {
             if (characterClass.displayName.equals(displayName)) {
@@ -39,10 +50,20 @@ public enum CharacterClass {
         return UNKNOWN;
     }
 
+    /**
+     * Returns the user-facing class name.
+     *
+     * @return display name used in GUI and save files
+     */
     public String getDisplayName() {
         return displayName;
     }
 
+    /**
+     * Returns the display name so combo boxes show readable class names.
+     *
+     * @return user-facing class name
+     */
     @Override
     public String toString() {
         return displayName;

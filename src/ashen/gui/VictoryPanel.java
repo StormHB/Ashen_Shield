@@ -250,7 +250,6 @@ public class VictoryPanel extends JPanel implements VictoryShortcutListener {
 
     /**
      * Registers keyboard shortcuts for short rest and moving to the next battle.
-     *
      */
 
     private void setupVictoryShortcuts() {

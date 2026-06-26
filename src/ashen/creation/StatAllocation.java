@@ -24,22 +24,48 @@ public class StatAllocation {
 
     private int pointsRemaining;
 
+    /**
+     * Creates a new allocation model with default point-buy values.
+     */
     public StatAllocation() {
         reset();
     }
 
+    /**
+     * Returns unspent point-buy points.
+     *
+     * @return remaining allocation points
+     */
     public int getPointsRemaining() {
         return pointsRemaining;
     }
 
+    /**
+     * Returns the displayed stat value including race bonuses and the maximum cap.
+     *
+     * @param ability ability score to read
+     * @return total stat value
+     */
     public int getValue(Ability ability) {
         return Math.min(MAX_TOTAL_VALUE, getBaseValue(ability) + getRaceBonus(ability));
     }
 
+    /**
+     * Returns the race bonus applied to one ability score.
+     *
+     * @param ability ability score to read
+     * @return race bonus for the ability
+     */
     public int getRaceBonus(Ability ability) {
         return raceBonuses.get(ability);
     }
 
+    /**
+     * Increases one base ability score when points and limits allow it.
+     *
+     * @param ability ability score to increase
+     * @return true if the score was increased
+     */
     public boolean increase(Ability ability) {
         if (pointsRemaining <= 0) {
             return false;
@@ -57,6 +83,12 @@ public class StatAllocation {
         return true;
     }
 
+    /**
+     * Decreases one base ability score when the minimum value allows it.
+     *
+     * @param ability ability score to decrease
+     * @return true if the score was decreased
+     */
     public boolean decrease(Ability ability) {
         int baseValue = getBaseValue(ability);
 
@@ -70,6 +102,9 @@ public class StatAllocation {
         return true;
     }
 
+    /**
+     * Randomly spends all available point-buy points.
+     */
     public void randomize() {
         reset();
 
@@ -81,6 +116,9 @@ public class StatAllocation {
         }
     }
 
+    /**
+     * Restores all base values, race bonuses and remaining points to defaults.
+     */
     public void reset() {
         pointsRemaining = STARTING_POINTS;
 
@@ -90,6 +128,11 @@ public class StatAllocation {
         }
     }
 
+    /**
+     * Applies race bonuses to the allocation model.
+     *
+     * @param bonuses race bonus values to apply
+     */
     public void applyRaceBonuses(Stats bonuses) {
         raceBonuses.put(Ability.STRENGTH, bonuses.getStrength());
         raceBonuses.put(Ability.DEXTERITY, bonuses.getDexterity());
@@ -99,6 +142,11 @@ public class StatAllocation {
         raceBonuses.put(Ability.LUCK, bonuses.getLuck());
     }
 
+    /**
+     * Converts current allocation values into a stats object.
+     *
+     * @return stats containing current total ability values
+     */
     public Stats toStats() {
         return new Stats(
                 getValue(Ability.STRENGTH),

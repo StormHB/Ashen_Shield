@@ -15,6 +15,13 @@ public final class CharacterLoadDialog {
     private CharacterLoadDialog() {
     }
 
+    /**
+     * Opens a file chooser and loads a serialized character.
+     *
+     * @param parent component used as the dialog parent
+     * @param saveLoadService service used for loading the character
+     * @return loaded character, or null when loading is cancelled or fails
+     */
     public static GameCharacter show(Component parent, CharacterPersistenceService saveLoadService) {
         JFileChooser fileChooser = new JFileChooser("DATA");
         fileChooser.setAcceptAllFileFilterUsed(true);

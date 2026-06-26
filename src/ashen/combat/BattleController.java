@@ -21,6 +21,13 @@ public class BattleController {
     private boolean rogueSneakAttackUsed;
     private int rangerPoisonDamage;
 
+    /**
+     * Creates a controller for one battle in the campaign.
+     *
+     * @param character player character
+     * @param enemyIndex index of the enemy to fight
+     * @param listener listener that receives battle events
+     */
     public BattleController(GameCharacter character, int enemyIndex, BattleEventListener listener) {
         this(character, enemyIndex, listener, new DiceRoller());
     }
@@ -39,26 +46,56 @@ public class BattleController {
         this.enemy = enemies[currentEnemyIndex];
     }
 
+    /**
+     * Returns the player character used in this battle.
+     *
+     * @return player character
+     */
     public GameCharacter getCharacter() {
         return character;
     }
 
+    /**
+     * Returns the enemy currently being fought.
+     *
+     * @return current enemy
+     */
     public Enemy getEnemy() {
         return enemy;
     }
 
+    /**
+     * Returns the campaign index of the current enemy.
+     *
+     * @return current enemy index
+     */
     public int getCurrentEnemyIndex() {
         return currentEnemyIndex;
     }
 
+    /**
+     * Returns the number of enemies in the campaign.
+     *
+     * @return enemy count
+     */
     public int getEnemyCount() {
         return enemies.length;
     }
 
+    /**
+     * Checks whether the player has been defeated.
+     *
+     * @return true if the player is defeated
+     */
     public boolean isPlayerDefeated() {
         return playerDefeated;
     }
 
+    /**
+     * Resolves a player attack and optionally lets the enemy respond.
+     *
+     * @param enemyResponds true when the enemy should attack after the player
+     */
     public void playerAttack(boolean enemyResponds) {
         if (character.getCharacterClassType() == CharacterClass.ROGUE && !rogueSneakAttackUsed) {
             rogueSneakAttackUsed = true;

@@ -12,6 +12,13 @@ public final class BattleLogService {
     private BattleLogService() {
     }
 
+    /**
+     * Writes the complete battle log text to a file.
+     *
+     * @param battleLog log text to export
+     * @param filePath destination file path
+     * @throws IOException if the log cannot be written
+     */
     public static void exportBattleLog(String battleLog, String filePath) throws IOException {
         File outputFile = new File(filePath);
         File parentFolder = outputFile.getParentFile();
