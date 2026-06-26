@@ -4,11 +4,34 @@ package ashen.model;
  * Playable character classes.
  */
 public enum CharacterClass {
+    /**
+     * Strength-based front-line class.
+     */
     FIGHTER("Fighter"),
+
+    /**
+     * Dexterity-based agile class.
+     */
     ROGUE("Rogue"),
+
+    /**
+     * Intelligence-based spellcasting class.
+     */
     WIZARD("Wizard"),
+
+    /**
+     * Wisdom-based nature magic class.
+     */
     DRUID("Druid"),
+
+    /**
+     * Dexterity-based ranged combat class.
+     */
     RANGER("Ranger"),
+
+    /**
+     * Fallback class value used for unknown saved data.
+     */
     UNKNOWN("Unknown");
 
     private static final CharacterClass[] PLAYABLE_VALUES = {

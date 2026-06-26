@@ -20,11 +20,29 @@ public class StatAllocationPanel extends JPanel {
     private static final Color LIGHT_BONUS_COLOR = new Color(180, 140, 0);
     private static final Color STRONG_BONUS_COLOR = new Color(0, 180, 0);
 
+    /**
+     * Point allocation model used by this panel.
+     */
     private final StatAllocation statAllocation = new StatAllocation();
+
+    /**
+     * Labels that display current stat values by ability.
+     */
     private final Map<Ability, JLabel> statValueLabels = new EnumMap<>(Ability.class);
+
+    /**
+     * Labels that display current stat modifiers by ability.
+     */
     private final Map<Ability, JLabel> statModifierLabels = new EnumMap<>(Ability.class);
 
+    /**
+     * Race bonuses currently applied to the allocation model.
+     */
     private Stats raceBonuses = new Stats(0, 0, 0, 0, 0, 0);
+
+    /**
+     * Label that displays remaining allocation points.
+     */
     private JLabel pointsRemainingLabel;
 
     /**

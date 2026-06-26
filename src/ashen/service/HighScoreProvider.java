@@ -9,9 +9,24 @@ import java.io.IOException;
  */
 public interface HighScoreProvider {
 
+    /**
+     * Score category for normal difficulty.
+     */
     String NORMAL = "NORMAL";
+
+    /**
+     * Score category for hardcore mode with enemy HP bonus enabled.
+     */
     String HARDCORE_HP = "HARDCORE_HP";
+
+    /**
+     * Score category for hardcore mode with enemy damage bonus enabled.
+     */
     String HARDCORE_DAMAGE = "HARDCORE_DAMAGE";
+
+    /**
+     * Score category for hardcore mode with all enemy bonuses enabled.
+     */
     String HARDCORE_FULL = "HARDCORE_FULL";
 
     /**

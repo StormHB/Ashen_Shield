@@ -4,13 +4,44 @@ package ashen.model;
  * Player weapon choices.
  */
 public enum Weapon {
+    /**
+     * Fighter weapon set with shield armor class bonus.
+     */
     LONGSWORD_SHIELD("Longsword + Shield", 8, "1d8 + STR, +2 AC", "Damage: 1d8 + STR | Shield: +2 AC"),
+
+    /**
+     * Heavy fighter weapon with a large strength damage die.
+     */
     GREATSWORD("Greatsword", 12, "1d12 + STR", "Damage: 1d12 + STR | Two-handed | No shield"),
+
+    /**
+     * Rogue weapon set with an off-hand dagger.
+     */
     SCIMITAR_DAGGER("Scimitar + Dagger", 6, "1d6 + DEX + 1d4", "Damage: 1d6 + DEX + 1d4 off-hand"),
+
+    /**
+     * Rogue weapon set that trades smaller dice for attack accuracy.
+     */
     DUAL_DAGGERS("Dual Daggers", 4, "1d4 + DEX + 1d4, +2 Attack Bonus", "Damage: 1d4 + DEX + 1d4 off-hand | +2 Attack Bonus"),
+
+    /**
+     * Wizard weapon set that improves intelligence.
+     */
     ROD_SPELLBOOK("Rod + Spellbook", 12, "Fireball 1d12 + INT, +2 INT", "Fireball: 1d12 + INT | Spellbook: +2 INT"),
+
+    /**
+     * Druid weapon that uses wisdom for damage.
+     */
     QUARTERSTAFF("Quarterstaff", 10, "1d10 + WIS", "Damage: 1d10 + WIS | Two-handed"),
+
+    /**
+     * Ranger weapon that uses dexterity for ranged damage.
+     */
     LONGBOW("Longbow", 10, "1d10 + DEX", "Damage: 1d10 + DEX | Poison Arrows"),
+
+    /**
+     * Fallback weapon value used for unknown saved data.
+     */
     UNKNOWN("Unknown", 4, "?", null);
 
     private final String displayName;

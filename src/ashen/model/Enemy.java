@@ -11,10 +11,39 @@ public class Enemy implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Enemy display name.
+     *
+     * @serial enemy display name
+     */
     private String name;
+
+    /**
+     * Enemy maximum hit points.
+     *
+     * @serial maximum enemy hit points
+     */
     private int maxHp;
+
+    /**
+     * Enemy current hit points.
+     *
+     * @serial current enemy hit points
+     */
     private int currentHp;
+
+    /**
+     * Enemy armor class used for hit checks.
+     *
+     * @serial enemy armor class
+     */
     private int armorClass;
+
+    /**
+     * Enemy attack bonus added to d20 rolls.
+     *
+     * @serial enemy attack bonus
+     */
     private int attackBonus;
 
     /**

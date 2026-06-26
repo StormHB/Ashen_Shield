@@ -4,7 +4,14 @@ package ashen.model;
  * Campaign difficulty mode.
  */
 public enum Difficulty {
+    /**
+     * Standard campaign difficulty.
+     */
     NORMAL("Normal"),
+
+    /**
+     * Harder campaign difficulty with optional enemy bonuses.
+     */
     HARDCORE("Hardcore");
 
     private final String displayName;

@@ -11,6 +11,12 @@ import java.io.*;
 public class SaveLoadService implements CharacterPersistenceService {
 
     /**
+     * Creates a save/load service that uses Java object serialization.
+     */
+    public SaveLoadService() {
+    }
+
+    /**
      * Saves a character to the selected file path.
      * Creates the parent folder when it does not exist.
      *

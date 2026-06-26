@@ -12,18 +12,81 @@ public class GameCharacter implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Character display name.
+     *
+     * @serial character display name
+     */
     private String name;
+
+    /**
+     * Race display name stored for save file compatibility.
+     *
+     * @serial selected race display name
+     */
     private String race;
+
+    /**
+     * Class display name stored for save file compatibility.
+     *
+     * @serial selected class display name
+     */
     private String characterClass;
+
+    /**
+     * Character ability scores.
+     *
+     * @serial character ability scores
+     */
     private Stats stats;
+
+    /**
+     * Weapon display name stored for save file compatibility.
+     *
+     * @serial selected weapon display name
+     */
     private String weapon;
+
+    /**
+     * Armor display name stored for save file compatibility.
+     *
+     * @serial selected armor display name
+     */
     private String armor;
+
+    /**
+     * Difficulty display name stored for save file compatibility.
+     *
+     * @serial selected difficulty display name
+     */
     private String difficulty;
 
+    /**
+     * Character maximum hit points.
+     *
+     * @serial maximum hit points
+     */
     private int maxHp;
+
+    /**
+     * Character current hit points.
+     *
+     * @serial current hit points
+     */
     private int currentHp;
 
+    /**
+     * Whether hardcore enemy HP bonus is enabled.
+     *
+     * @serial hardcore HP modifier flag
+     */
     private boolean hardcoreHpBonus;
+
+    /**
+     * Whether hardcore enemy damage bonus is enabled.
+     *
+     * @serial hardcore damage modifier flag
+     */
     private boolean hardcoreDamageBonus;
 
     /**

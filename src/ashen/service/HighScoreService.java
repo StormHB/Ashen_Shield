@@ -17,6 +17,12 @@ public class HighScoreService implements HighScoreProvider {
     private static final String HIGH_SCORE_FILE = "DATA/highscores.txt";
 
     /**
+     * Creates a high score service that uses the default text file path.
+     */
+    public HighScoreService() {
+    }
+
+    /**
      * Saves a completed campaign result to the high score file.
      * The score category is determined automatically from the
      * character difficulty settings.

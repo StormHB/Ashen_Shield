@@ -25,19 +25,59 @@ import java.io.File;
  */
 public class BattlePanel extends JPanel implements BattleEventListener, BattleShortcutListener, BattleMenuListener {
 
+    /**
+     * Listener used to notify the frame about battle navigation events.
+     */
     private final BattlePanelListener listener;
+
+    /**
+     * Root pane that receives keyboard shortcuts for this battle screen.
+     */
     private final JRootPane shortcutRootPane;
+
+    /**
+     * Controller that owns the active battle state and combat flow.
+     */
     private final BattleController battleController;
+
+    /**
+     * Service used when the player saves the current character.
+     */
     private final CharacterPersistenceService saveLoadService;
+
+    /**
+     * Service used to load high score text from the battle menu.
+     */
     private final HighScoreProvider highScoreService;
 
+    /**
+     * Tracks whether the current battle log was already exported.
+     */
     private boolean currentBattleLogSaved;
 
+    /**
+     * Label that displays the player's current HP.
+     */
     private JLabel playerHpLabel;
+
+    /**
+     * Label that displays the enemy's current HP.
+     */
     private JLabel enemyHpLabel;
 
+    /**
+     * Text area containing the visible battle log.
+     */
     private JTextArea battleLogArea;
+
+    /**
+     * Button that performs the player's attack.
+     */
     private JButton attackButton;
+
+    /**
+     * Button that advances after a completed battle.
+     */
     private JButton nextButton;
 
     /**

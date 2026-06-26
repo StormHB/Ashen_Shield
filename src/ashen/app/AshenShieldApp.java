@@ -9,7 +9,10 @@ import javax.swing.*;
  * Starts the Swing user interface on the Event Dispatch Thread.
  */
 
-public class AshenShieldApp {
+public final class AshenShieldApp {
+
+    private AshenShieldApp() {
+    }
 
     /**
      * Launches the application and displays the main frame.

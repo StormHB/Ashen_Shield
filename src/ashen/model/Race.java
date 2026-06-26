@@ -4,11 +4,34 @@ package ashen.model;
  * Playable character races.
  */
 public enum Race {
+    /**
+     * Balanced race with bonuses across several abilities.
+     */
     HUMAN("Human", 1, 1, 1, 0, 0, 1, "+1 STR, +1 DEX, +1 CON, +1 LCK"),
+
+    /**
+     * Agile race focused on dexterity.
+     */
     ELF("Elf", 0, 2, 1, 0, 0, 1, "+2 DEX, +1 CON, +1 LCK"),
+
+    /**
+     * Hardy race focused on strength, constitution and wisdom.
+     */
     DWARF("Dwarf", 1, 0, 1, 0, 2, 0, "+1 STR, +1 CON, +2 WIS"),
+
+    /**
+     * Arcane race focused on intelligence and luck.
+     */
     TIEFLING("Tiefling", 0, 0, 0, 2, 0, 2, "+2 INT, +2 LCK"),
+
+    /**
+     * Strong race focused on physical combat.
+     */
     DRAGONBORN("Dragonborn", 2, 0, 1, 0, 0, 1, "+2 STR, +1 CON, +1 LCK"),
+
+    /**
+     * Fallback race value used for unknown saved data.
+     */
     UNKNOWN("Unknown", 0, 0, 0, 0, 0, 0, "None");
 
     private static final Race[] PLAYABLE_VALUES = {

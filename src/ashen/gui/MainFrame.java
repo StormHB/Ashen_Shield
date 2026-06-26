@@ -21,8 +21,19 @@ import java.awt.*;
 public class MainFrame extends JFrame implements MainMenuListener, CharacterCreationListener,
         BattlePanelListener, VictoryPanelListener, DefeatPanelListener {
 
+    /**
+     * Accumulated text for the full campaign battle log.
+     */
     private StringBuilder campaignBattleLog = new StringBuilder();
+
+    /**
+     * Service used by panels to save and load characters.
+     */
     private final CharacterPersistenceService saveLoadService;
+
+    /**
+     * Service used by panels to save and display high scores.
+     */
     private final HighScoreProvider highScoreService;
 
     /**

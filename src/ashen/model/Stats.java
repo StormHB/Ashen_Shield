@@ -11,11 +11,46 @@ public class Stats implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Strength ability score.
+     *
+     * @serial strength score
+     */
     private int strength;
+
+    /**
+     * Dexterity ability score.
+     *
+     * @serial dexterity score
+     */
     private int dexterity;
+
+    /**
+     * Constitution ability score.
+     *
+     * @serial constitution score
+     */
     private int constitution;
+
+    /**
+     * Intelligence ability score.
+     *
+     * @serial intelligence score
+     */
     private int intelligence;
+
+    /**
+     * Wisdom ability score.
+     *
+     * @serial wisdom score
+     */
     private int wisdom;
+
+    /**
+     * Luck ability score.
+     *
+     * @serial luck score
+     */
     private int luck;
 
     /**

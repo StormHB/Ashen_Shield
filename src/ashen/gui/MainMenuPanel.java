@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 
 public class MainMenuPanel extends JPanel {
 
+    /**
+     * Listener notified when a main menu action is selected.
+     */
     private MainMenuListener listener;
 
     /**

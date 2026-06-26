@@ -22,19 +22,69 @@ import java.awt.event.ActionListener;
 
 public class CharacterCreationPanel extends JPanel {
 
+    /**
+     * Listener notified when a character is created or navigation is requested.
+     */
     private final CharacterCreationListener listener;
+
+    /**
+     * Text field used to enter the character name.
+     */
     private JTextField nameField;
+
+    /**
+     * Combo box used to select the character race.
+     */
     private JComboBox<Race> raceBox;
+
+    /**
+     * Combo box used to select the character class.
+     */
     private JComboBox<CharacterClass> classBox;
+
+    /**
+     * Text area that displays the selected class description.
+     */
     private JTextArea classDescriptionArea;
+
+    /**
+     * Combo box used to select the starting weapon.
+     */
     private JComboBox<Weapon> weaponBox;
+
+    /**
+     * Combo box used to select the starting armor.
+     */
     private JComboBox<Armor> armorBox;
+
+    /**
+     * Radio button for normal campaign difficulty.
+     */
     private JRadioButton normalDifficultyButton;
+
+    /**
+     * Radio button for hardcore campaign difficulty.
+     */
     private JRadioButton hardDifficultyButton;
+
+    /**
+     * Checkbox for enabling the hardcore enemy HP bonus.
+     */
     private JCheckBox hardcoreHpCheckBox;
+
+    /**
+     * Checkbox for enabling the hardcore enemy damage bonus.
+     */
     private JCheckBox hardcoreDamageCheckBox;
 
+    /**
+     * Panel that owns point-buy stat allocation controls.
+     */
     private final StatAllocationPanel statAllocationPanel;
+
+    /**
+     * Label that displays the selected race bonus summary.
+     */
     private JLabel raceBonusLabel;
 
     /**

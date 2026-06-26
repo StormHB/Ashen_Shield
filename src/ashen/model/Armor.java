@@ -4,12 +4,39 @@ package ashen.model;
  * Player armor choices.
  */
 public enum Armor {
+    /**
+     * Light robe intended for spellcasting characters.
+     */
     CLOTH_ROBE("Cloth Robe", 10, "AC: 10 | +2 INT"),
+
+    /**
+     * Light tunic that improves the character's main combat stat.
+     */
     LEATHER_TUNIC("Leather Tunic", 12, "AC: 12 | +2 main stat"),
+
+    /**
+     * Medium leather armor with a smaller main stat bonus.
+     */
     LEATHER_ARMOR("Leather Armor", 14, "AC: 14 | +1 main stat"),
+
+    /**
+     * Durable hide armor with no extra stat bonus.
+     */
     HIDE_ARMOR("Hide Armor", 16, "AC: 16"),
+
+    /**
+     * Chain mail that favors strength-based characters.
+     */
     CHAIN_MAIL("Chain Mail", 15, "AC: 15 | +2 STR"),
+
+    /**
+     * Heavy armor with the highest base armor class.
+     */
     PLATE_ARMOR("Plate Armor", 17, "AC: 17"),
+
+    /**
+     * Fallback armor value used for unknown saved data.
+     */
     UNKNOWN("Unknown", 10, null);
 
     private final String displayName;

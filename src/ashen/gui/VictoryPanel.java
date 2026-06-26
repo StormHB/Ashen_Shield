@@ -21,16 +21,54 @@ import java.io.IOException;
 
 public class VictoryPanel extends JPanel implements VictoryShortcutListener {
 
+    /**
+     * Listener notified when the user leaves the victory screen.
+     */
     private VictoryPanelListener listener;
+
+    /**
+     * Root pane that receives keyboard shortcuts for this victory screen.
+     */
     private JRootPane shortcutRootPane;
+
+    /**
+     * Character that won the previous battle.
+     */
     private GameCharacter character;
+
+    /**
+     * Index of the enemy defeated in the previous battle.
+     */
     private int defeatedEnemyIndex;
+
+    /**
+     * Name of the enemy defeated in the previous battle.
+     */
     private String defeatedEnemyName;
+
+    /**
+     * Service used when the victorious character is saved.
+     */
     private CharacterPersistenceService saveLoadService;
+
+    /**
+     * Service used when campaign scores are saved.
+     */
     private HighScoreProvider highScoreService;
+
+    /**
+     * Button that saves the final campaign score.
+     */
     private JButton saveScoreButton;
 
+    /**
+     * Button that performs a short rest after battle.
+     */
     private JButton shortRestButton;
+
+    /**
+     * Button that advances to the next battle.
+     */
     private JButton nextBattleButton;
 
     /**

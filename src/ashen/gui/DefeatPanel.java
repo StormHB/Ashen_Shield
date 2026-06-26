@@ -16,8 +16,19 @@ import java.awt.event.ActionListener;
 
 public class DefeatPanel extends JPanel {
 
+    /**
+     * Listener notified when the user leaves the defeat screen.
+     */
     private DefeatPanelListener listener;
+
+    /**
+     * Defeated character shown on this panel.
+     */
     private GameCharacter character;
+
+    /**
+     * Service used when the defeated character is saved.
+     */
     private CharacterPersistenceService saveLoadService;
 
     /**

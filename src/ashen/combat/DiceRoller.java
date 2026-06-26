@@ -10,6 +10,12 @@ public final class DiceRoller {
     private final Random random = new Random();
 
     /**
+     * Creates a dice roller backed by a random number generator.
+     */
+    public DiceRoller() {
+    }
+
+    /**
      * Rolls one die with the requested number of sides.
      *
      * @param sides number of die sides
